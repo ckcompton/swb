@@ -18,6 +18,7 @@ function makeSession(overrides: Partial<ClassSession> = {}): ClassSession {
     endsAt: "2026-08-01T01:00:00.000Z",
     capacity: 10,
     status: "scheduled",
+    allowsFreeTrial: false,
     createdBy: null,
     createdAt: "2026-07-01T00:00:00.000Z",
     updatedAt: "2026-07-01T00:00:00.000Z",

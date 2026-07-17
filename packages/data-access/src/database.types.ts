@@ -1,5 +1,6 @@
 // Generated via: supabase gen types typescript --local
 // Regenerate after changing supabase/migrations/*.sql (see README.md).
+export type Json =
   | string
   | number
   | boolean
