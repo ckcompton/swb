@@ -183,6 +183,25 @@ screen with a logout button.
 There's no social login or seeded users — sign up through the app at `/signup`. New accounts get
 the `member` role automatically (via the `handle_new_user` trigger on `auth.users`).
 
+`supabase/seed.sql` cannot create `auth.users` rows (Supabase Auth owns that table), so every
+`supabase db reset` wipes all accounts even though trainers/classes/announcements come back. Run
+this after any reset to restore a standard set of test accounts:
+
+```bash
+./scripts/seed-test-users.sh
+```
+
+It's idempotent (safe to re-run) and creates, all with password `testpass123`:
+
+| Email                   | Role   | Membership      |
+| ----------------------- | ------ | --------------- |
+| jane.doe@test.local     | member | active          |
+| mark.rivera@test.local  | member | active (annual) |
+| priya.singh@test.local  | member | inactive        |
+| leo.tran@test.local     | member | expired         |
+| sam.okonkwo@test.local  | member | none            |
+| check-select@test.local | admin  | —               |
+
 ### Promoting the first admin
 
 After signing up, promote your account to admin directly in the database:
