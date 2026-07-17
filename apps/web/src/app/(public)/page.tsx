@@ -27,8 +27,13 @@ const HIGHLIGHTS = [
 export default function HomePage() {
   return (
     <div>
-      <section className="border-b border-border bg-background">
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
+      <section className="relative border-b border-border">
+        <div
+          aria-hidden
+          className="absolute inset-0 scale-x-[-1] bg-[url('/boxing-background.png')] bg-cover bg-center contrast-110 saturate-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
+        <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
           <p className="text-sm font-semibold uppercase tracking-widest text-gold">
             {DESIGN_TOKENS.siteName}
           </p>
