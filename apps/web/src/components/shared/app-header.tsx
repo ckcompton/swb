@@ -8,7 +8,7 @@ import { logoutAction } from "@/features/auth/actions";
 
 export function AppHeader({ profile, homeHref }: { profile: Profile; homeHref: string }) {
   return (
-    <header className="border-b border-border bg-background">
+    <header className="border-b border-border bg-card">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href={homeHref} className="text-lg font-bold tracking-tight uppercase">
           {DESIGN_TOKENS.siteName}

@@ -61,7 +61,11 @@ export default function PricingPage() {
         {PLANS.map((plan) => (
           <Card key={plan.name} className={plan.highlighted ? "border-primary" : undefined}>
             <CardHeader>
-              {plan.highlighted && <Badge className="mb-2 w-fit">Most popular</Badge>}
+              {plan.highlighted && (
+                <Badge className="mb-2 w-fit bg-gold text-gold-foreground hover:bg-gold">
+                  Most popular
+                </Badge>
+              )}
               <CardTitle className="text-xl">{plan.name}</CardTitle>
               <CardDescription>{plan.description}</CardDescription>
             </CardHeader>
@@ -73,7 +77,7 @@ export default function PricingPage() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-2">
-                    <span aria-hidden className="mt-0.5 text-primary">
+                    <span aria-hidden className="mt-0.5 text-gold">
                       &bull;
                     </span>
                     <span>{feature}</span>

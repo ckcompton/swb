@@ -9,13 +9,22 @@ export function SiteFooter() {
           &copy; {new Date().getFullYear()} {DESIGN_TOKENS.siteName}. All rights reserved.
         </p>
         <nav className="flex gap-6">
-          <Link href="/schedule" className="hover:text-foreground">
+          <Link
+            href="/schedule"
+            className="underline-offset-4 hover:text-foreground hover:underline"
+          >
             Schedule
           </Link>
-          <Link href="/trainers" className="hover:text-foreground">
+          <Link
+            href="/trainers"
+            className="underline-offset-4 hover:text-foreground hover:underline"
+          >
             Trainers
           </Link>
-          <Link href="/pricing" className="hover:text-foreground">
+          <Link
+            href="/pricing"
+            className="underline-offset-4 hover:text-foreground hover:underline"
+          >
             Pricing
           </Link>
         </nav>

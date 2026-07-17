@@ -29,7 +29,7 @@ export default function HomePage() {
     <div>
       <section className="border-b border-border bg-background">
         <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
-          <p className="text-sm font-semibold uppercase tracking-widest text-primary">
+          <p className="text-sm font-semibold uppercase tracking-widest text-gold">
             {DESIGN_TOKENS.siteName}
           </p>
           <h1 className="mt-4 max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
@@ -40,10 +40,16 @@ export default function HomePage() {
             classes, real results.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
-            <Button size="lg" render={<Link href="/signup">Join now</Link>} nativeButton={false} />
+            <Button
+              size="lg"
+              className="h-12 px-8 text-base"
+              render={<Link href="/signup">Join now</Link>}
+              nativeButton={false}
+            />
             <Button
               size="lg"
               variant="outline"
+              className="h-12 px-8 text-base"
               render={<Link href="/schedule">View schedule</Link>}
               nativeButton={false}
             />
