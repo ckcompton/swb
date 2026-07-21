@@ -18,6 +18,7 @@ const ACK_BODY = "Hello API Event Received";
 export async function POST(request: Request) {
   const apiKey = process.env.DROPBOX_SIGN_API_KEY;
   if (!apiKey) {
+    console.error("waiver webhook: DROPBOX_SIGN_API_KEY missing, cannot verify/process");
     // Mis/unconfigured -- ack anyway so Dropbox Sign doesn't hammer retries;
     // there's nothing useful we can verify or persist without the key.
     return new NextResponse(ACK_BODY);
@@ -28,9 +29,12 @@ export async function POST(request: Request) {
   let event;
   try {
     event = parseWebhookPayload(rawBody);
-  } catch {
+  } catch (error) {
+    console.error("waiver webhook: parseWebhookPayload threw", error);
     return new NextResponse(ACK_BODY);
   }
+
+  console.log("waiver webhook: received event", event.eventType, event.signatureRequestId);
 
   const verified = await verifyWebhookEventHash({
     apiKey,
@@ -39,6 +43,7 @@ export async function POST(request: Request) {
     eventHash: event.eventHash,
   });
   if (!verified) {
+    console.error("waiver webhook: event hash verification failed", event.eventType);
     return new NextResponse(ACK_BODY);
   }
 
@@ -48,13 +53,18 @@ export async function POST(request: Request) {
         apiKey,
         signatureRequestId: event.signatureRequestId,
       });
+      console.log("waiver webhook: got signed file url, marking waiver signed");
       const supabase = createServiceRoleClient();
-      await markWaiverSigned(supabase, event.signatureRequestId, documentUrl);
-    } catch {
-      // Swallow -- still ack so Dropbox Sign doesn't retry indefinitely.
-      // If this fails, the member's waiver stays "pending" and they'll see
-      // the sign flow again, which is safe (idempotent on their end too).
+      const waiver = await markWaiverSigned(supabase, event.signatureRequestId, documentUrl);
+      console.log("waiver webhook: waiver marked signed", waiver.id, waiver.profileId);
+    } catch (error) {
+      console.error("waiver webhook: failed to mark waiver signed", error);
+      // Still ack so Dropbox Sign doesn't retry indefinitely. If this fails,
+      // the member's waiver stays "pending" and they'll see the sign flow
+      // again, which is safe (idempotent on their end too).
     }
+  } else {
+    console.log("waiver webhook: ignoring event type", event.eventType);
   }
 
   return new NextResponse(ACK_BODY);
