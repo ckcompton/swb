@@ -1,7 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Menu } from "lucide-react";
 import { DESIGN_TOKENS } from "@boxing-gym/config";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { getAuthContext } from "@/lib/auth";
 
 const NAV_LINKS = [
@@ -59,6 +66,24 @@ export async function SiteHeader() {
             nativeButton={false}
           />
           <Button render={<Link href="/signup">Book a session</Link>} nativeButton={false} />
+
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open menu">
+                  <Menu />
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="end" className="min-w-40">
+              {NAV_LINKS.map((link) => (
+                <DropdownMenuItem
+                  key={link.href}
+                  render={<Link href={link.href}>{link.label}</Link>}
+                />
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>
