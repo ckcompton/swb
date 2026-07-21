@@ -56,6 +56,14 @@ export async function createTrainer(
   return mapTrainer(data);
 }
 
+export async function deleteTrainer(
+  client: SupabaseClient<Database>,
+  trainerId: string,
+): Promise<void> {
+  const { error } = await client.from("trainers").delete().eq("id", trainerId);
+  if (error) throw error;
+}
+
 export interface UpdateTrainerInput {
   name?: string;
   bio?: string | null;

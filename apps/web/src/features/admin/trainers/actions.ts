@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 import {
   buildTrainerPhotoPath,
   createTrainer,
+  deleteTrainer,
   deleteTrainerPhoto,
+  getTrainerById,
   updateTrainer,
   uploadTrainerPhoto,
 } from "@boxing-gym/data-access";
@@ -82,6 +84,30 @@ export async function updateTrainerAction(formData: FormData): Promise<AdminActi
   const photoResult = await maybeUploadPhoto(formData, trainerId);
   if (!photoResult.success) {
     return photoResult;
+  }
+
+  revalidatePath("/admin/trainers");
+  revalidatePath("/trainers");
+  return { success: true };
+}
+
+export async function deleteTrainerAction(formData: FormData): Promise<AdminActionResult> {
+  await requireAdmin();
+
+  const trainerId = formData.get("trainerId");
+  if (typeof trainerId !== "string" || trainerId.length === 0) {
+    return { success: false, error: "Invalid trainer." };
+  }
+
+  const supabase = await createClient();
+  try {
+    const trainer = await getTrainerById(supabase, trainerId);
+    if (trainer?.photoPath) {
+      await deleteTrainerPhoto(supabase, trainer.photoPath);
+    }
+    await deleteTrainer(supabase, trainerId);
+  } catch {
+    return { success: false, error: "Could not delete trainer." };
   }
 
   revalidatePath("/admin/trainers");

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth";
+import { DeleteTrainerButton } from "@/features/admin/trainers/delete-trainer-button";
 import { TrainerForm } from "@/features/admin/trainers/trainer-form";
 import { trainerPhotoUrl } from "@/features/trainers/trainer-photo-url";
 import { initialsFromFullName } from "@boxing-gym/utils";
@@ -65,15 +66,18 @@ export default async function AdminTrainersPage() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <TrainerForm
-                        trainer={trainer}
-                        photoUrl={photoUrl}
-                        trigger={
-                          <Button size="sm" variant="outline">
-                            Edit
-                          </Button>
-                        }
-                      />
+                      <div className="flex justify-end gap-2">
+                        <TrainerForm
+                          trainer={trainer}
+                          photoUrl={photoUrl}
+                          trigger={
+                            <Button size="sm" variant="outline">
+                              Edit
+                            </Button>
+                          }
+                        />
+                        <DeleteTrainerButton trainerId={trainer.id} trainerName={trainer.name} />
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
