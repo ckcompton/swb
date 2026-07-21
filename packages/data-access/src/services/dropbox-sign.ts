@@ -120,15 +120,11 @@ export interface WebhookEvent {
   signatureRequestId: string | null;
 }
 
-// Dropbox Sign posts callbacks as application/x-www-form-urlencoded with a
-// single `json` field containing the event payload.
-export function parseWebhookPayload(rawFormBody: string): WebhookEvent {
-  const params = new URLSearchParams(rawFormBody);
-  const json = params.get("json");
-  if (!json) {
-    throw new Error("Dropbox Sign webhook payload missing 'json' field");
-  }
-
+// Dropbox Sign posts callbacks as multipart/form-data with a single `json`
+// field containing the event payload -- the caller extracts that field via
+// the Web FormData API (which handles multipart parsing) and passes its
+// string value here, since this package can't depend on a Request type.
+export function parseWebhookPayload(json: string): WebhookEvent {
   const payload = JSON.parse(json);
   return {
     eventType: payload.event.event_type,

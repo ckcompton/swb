@@ -24,11 +24,16 @@ export async function POST(request: Request) {
     return new NextResponse(ACK_BODY);
   }
 
-  const rawBody = await request.text();
+  const formData = await request.formData();
+  const json = formData.get("json");
+  if (typeof json !== "string") {
+    console.error("waiver webhook: form data missing 'json' field");
+    return new NextResponse(ACK_BODY);
+  }
 
   let event;
   try {
-    event = parseWebhookPayload(rawBody);
+    event = parseWebhookPayload(json);
   } catch (error) {
     console.error("waiver webhook: parseWebhookPayload threw", error);
     return new NextResponse(ACK_BODY);
