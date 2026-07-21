@@ -53,7 +53,12 @@ export default async function AdminClassesPage() {
             <TableBody>
               {sessions.map((session) => (
                 <TableRow key={session.id}>
-                  <TableCell className="font-medium">{session.title}</TableCell>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-2">
+                      {session.title}
+                      {session.seriesId && <Badge variant="secondary">Weekly series</Badge>}
+                    </div>
+                  </TableCell>
                   <TableCell className="text-muted-foreground">
                     {session.trainer?.name ?? "—"}
                   </TableCell>
@@ -79,7 +84,11 @@ export default async function AdminClassesPage() {
                       }
                     />
                     {session.status === "scheduled" && (
-                      <CancelClassButton sessionId={session.id} title={session.title} />
+                      <CancelClassButton
+                        sessionId={session.id}
+                        title={session.title}
+                        isPartOfSeries={Boolean(session.seriesId)}
+                      />
                     )}
                   </TableCell>
                 </TableRow>

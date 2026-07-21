@@ -128,6 +128,7 @@ export type Database = {
           description: string | null
           ends_at: string
           id: string
+          series_id: string | null
           starts_at: string
           status: Database["public"]["Enums"]["class_session_status"]
           title: string
@@ -142,6 +143,7 @@ export type Database = {
           description?: string | null
           ends_at: string
           id?: string
+          series_id?: string | null
           starts_at: string
           status?: Database["public"]["Enums"]["class_session_status"]
           title: string
@@ -156,6 +158,7 @@ export type Database = {
           description?: string | null
           ends_at?: string
           id?: string
+          series_id?: string | null
           starts_at?: string
           status?: Database["public"]["Enums"]["class_session_status"]
           title?: string
@@ -446,6 +449,14 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      has_recent_trial_request: {
+        Args: {
+          p_class_session_id: string
+          p_email: string
+          p_window_minutes: number
+        }
+        Returns: boolean
+      }
       is_admin: { Args: never; Returns: boolean }
       is_member_eligible_for_session: {
         Args: {
@@ -650,4 +661,3 @@ export const Constants = {
     },
   },
 } as const
-

@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import type { ClassSession, Trainer } from "@boxing-gym/domain";
+import { APP_LIMITS } from "@boxing-gym/config";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import {
   createClassSessionAction,
@@ -48,10 +50,15 @@ export function ClassSessionForm({
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [trainerId, setTrainerId] = useState(session?.trainerId ?? "none");
+  const [repeatWeekly, setRepeatWeekly] = useState(false);
+  const [occurrenceCount, setOccurrenceCount] = useState(8);
 
   const onSubmit = (formData: FormData) => {
     if (trainerId !== "none") {
       formData.set("trainerId", trainerId);
+    }
+    if (!session && repeatWeekly) {
+      formData.set("occurrenceCount", String(occurrenceCount));
     }
     startTransition(async () => {
       const result = session
@@ -155,6 +162,36 @@ export function ClassSessionForm({
               required
             />
           </div>
+
+          {!session && (
+            <div className="space-y-3 rounded-md border border-border p-3">
+              <div className="flex items-center justify-between gap-2">
+                <Label htmlFor="repeatWeekly">Repeat weekly</Label>
+                <Switch
+                  id="repeatWeekly"
+                  checked={repeatWeekly}
+                  onCheckedChange={(checked) => setRepeatWeekly(checked ?? false)}
+                />
+              </div>
+              {repeatWeekly && (
+                <div className="space-y-2">
+                  <Label htmlFor="occurrenceCount">Number of occurrences</Label>
+                  <Input
+                    id="occurrenceCount"
+                    type="number"
+                    min={2}
+                    max={APP_LIMITS.maxRecurringOccurrences}
+                    value={occurrenceCount}
+                    onChange={(e) => setOccurrenceCount(Number(e.target.value))}
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Creates {occurrenceCount} classes, one week apart, starting from the date above.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           <DialogFooter>
             <Button type="submit" disabled={isPending}>

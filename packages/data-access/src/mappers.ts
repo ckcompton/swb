@@ -54,6 +54,7 @@ export function mapClassSession(row: ClassSessionRow): ClassSession {
     capacity: row.capacity,
     status: row.status,
     allowsFreeTrial: row.allows_free_trial,
+    seriesId: row.series_id,
     createdBy: row.created_by,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

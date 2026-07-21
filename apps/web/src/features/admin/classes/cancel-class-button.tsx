@@ -16,7 +16,15 @@ import {
 } from "@/components/ui/alert-dialog";
 import { cancelClassSessionAction } from "@/features/admin/classes/actions";
 
-export function CancelClassButton({ sessionId, title }: { sessionId: string; title: string }) {
+export function CancelClassButton({
+  sessionId,
+  title,
+  isPartOfSeries,
+}: {
+  sessionId: string;
+  title: string;
+  isPartOfSeries?: boolean;
+}) {
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
 
@@ -49,6 +57,8 @@ export function CancelClassButton({ sessionId, title }: { sessionId: string; tit
           <AlertDialogDescription>
             This will cancel &quot;{title}&quot;. Existing bookings remain visible to members but
             the class will be marked canceled and can no longer be booked.
+            {isPartOfSeries &&
+              " This class is part of a weekly series -- only this occurrence is affected, other classes in the series stay scheduled."}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

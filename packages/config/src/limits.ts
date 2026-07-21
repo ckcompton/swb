@@ -6,6 +6,7 @@ export const APP_LIMITS = {
   announcementTitleMaxLength: 200,
   classTitleMaxLength: 150,
   classDescriptionMaxLength: 2000,
+  maxRecurringOccurrences: 52,
   trainerPhotoMaxSizeBytes: 5 * 1024 * 1024,
   trainerPhotoAllowedMimeTypes: ["image/jpeg", "image/png", "image/webp"] as const,
   trialRequestNameMaxLength: 100,

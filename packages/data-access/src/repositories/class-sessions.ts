@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { ClassSession, ClassSessionWithCounts } from "@boxing-gym/domain";
+import { generateWeeklyOccurrences } from "@boxing-gym/domain";
 import type { Database } from "../database.types";
 import { mapClassSession, mapTrainer } from "../mappers";
 import { getWaitlistCounts } from "./waitlist";
@@ -129,6 +130,37 @@ export async function createClassSession(
     .single();
   if (error) throw error;
   return mapClassSession(data);
+}
+
+export async function createRecurringClassSessions(
+  client: SupabaseClient<Database>,
+  input: CreateClassSessionInput,
+  occurrenceCount: number,
+): Promise<ClassSession[]> {
+  const seriesId = crypto.randomUUID();
+  const occurrences = generateWeeklyOccurrences(
+    { startsAt: input.startsAt, endsAt: input.endsAt },
+    occurrenceCount,
+  );
+
+  const { data, error } = await client
+    .from("class_sessions")
+    .insert(
+      occurrences.map((occurrence) => ({
+        title: input.title,
+        description: input.description ?? null,
+        trainer_id: input.trainerId ?? null,
+        starts_at: occurrence.startsAt,
+        ends_at: occurrence.endsAt,
+        capacity: input.capacity,
+        allows_free_trial: input.allowsFreeTrial ?? false,
+        created_by: input.createdBy ?? null,
+        series_id: seriesId,
+      })),
+    )
+    .select("*");
+  if (error) throw error;
+  return data.map(mapClassSession);
 }
 
 export interface UpdateClassSessionInput {

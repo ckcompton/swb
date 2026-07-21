@@ -38,6 +38,7 @@ export interface ClassSession {
   capacity: number;
   status: ClassSessionStatus;
   allowsFreeTrial: boolean;
+  seriesId: string | null;
   createdBy: string | null;
   createdAt: string;
   updatedAt: string;

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import {
   cancelClassSession,
   createClassSession,
+  createRecurringClassSessions,
   updateClassSession,
 } from "@boxing-gym/data-access";
 import { classSessionInputSchema } from "@boxing-gym/domain";
@@ -25,6 +26,7 @@ export async function createClassSessionAction(formData: FormData): Promise<Admi
     startsAt: toIso(formData.get("startsAt")),
     endsAt: toIso(formData.get("endsAt")),
     capacity: Number(formData.get("capacity")),
+    occurrenceCount: formData.get("occurrenceCount") || undefined,
   });
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid class." };
@@ -32,7 +34,7 @@ export async function createClassSessionAction(formData: FormData): Promise<Admi
 
   const supabase = await createClient();
   try {
-    await createClassSession(supabase, {
+    const sessionInput = {
       title: parsed.data.title,
       description: parsed.data.description || null,
       trainerId: parsed.data.trainerId,
@@ -40,7 +42,12 @@ export async function createClassSessionAction(formData: FormData): Promise<Admi
       endsAt: parsed.data.endsAt,
       capacity: parsed.data.capacity,
       createdBy: auth.userId,
-    });
+    };
+    if (parsed.data.occurrenceCount && parsed.data.occurrenceCount > 1) {
+      await createRecurringClassSessions(supabase, sessionInput, parsed.data.occurrenceCount);
+    } else {
+      await createClassSession(supabase, sessionInput);
+    }
   } catch {
     return { success: false, error: "Could not create class." };
   }

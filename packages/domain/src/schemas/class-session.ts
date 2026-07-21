@@ -19,6 +19,12 @@ export const classSessionInputSchema = z
       .min(APP_LIMITS.minClassCapacity, "Capacity must be greater than zero")
       .max(APP_LIMITS.maxClassCapacity),
     allowsFreeTrial: z.boolean().optional(),
+    occurrenceCount: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(APP_LIMITS.maxRecurringOccurrences)
+      .optional(),
   })
   .refine((data) => new Date(data.endsAt).getTime() > new Date(data.startsAt).getTime(), {
     message: "End time must be after start time",
