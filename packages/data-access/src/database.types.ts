@@ -381,6 +381,53 @@ export type Database = {
           },
         ]
       }
+      waivers: {
+        Row: {
+          created_at: string
+          document_url: string | null
+          id: string
+          profile_id: string
+          provider: string
+          provider_request_id: string | null
+          signed_at: string | null
+          status: string
+          updated_at: string
+          waiver_version: string
+        }
+        Insert: {
+          created_at?: string
+          document_url?: string | null
+          id?: string
+          profile_id: string
+          provider?: string
+          provider_request_id?: string | null
+          signed_at?: string | null
+          status?: string
+          updated_at?: string
+          waiver_version: string
+        }
+        Update: {
+          created_at?: string
+          document_url?: string | null
+          id?: string
+          profile_id?: string
+          provider?: string
+          provider_request_id?: string | null
+          signed_at?: string | null
+          status?: string
+          updated_at?: string
+          waiver_version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waivers_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       class_session_booked_counts: {
@@ -497,6 +544,27 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "waitlist_entries"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      mark_waiver_signed: {
+        Args: { p_document_url: string; p_request_id: string }
+        Returns: {
+          created_at: string
+          document_url: string | null
+          id: string
+          profile_id: string
+          provider: string
+          provider_request_id: string | null
+          signed_at: string | null
+          status: string
+          updated_at: string
+          waiver_version: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "waivers"
           isOneToOne: true
           isSetofReturn: false
         }
@@ -661,3 +729,4 @@ export const Constants = {
     },
   },
 } as const
+

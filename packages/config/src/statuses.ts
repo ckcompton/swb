@@ -21,3 +21,6 @@ export type TrialExperienceLevel = (typeof TRIAL_EXPERIENCE_LEVELS)[number];
 
 export const WAITLIST_STATUSES = ["waiting", "promoted", "left"] as const;
 export type WaitlistStatus = (typeof WAITLIST_STATUSES)[number];
+
+export const WAIVER_STATUSES = ["pending", "signed"] as const;
+export type WaiverStatus = (typeof WAIVER_STATUSES)[number];

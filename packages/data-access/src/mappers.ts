@@ -6,8 +6,10 @@ import type {
   Profile,
   Trainer,
   TrialRequest,
+  Waiver,
   WaitlistEntry,
 } from "@boxing-gym/domain";
+import type { WaiverStatus } from "@boxing-gym/config";
 import type { Database } from "./database.types";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
@@ -18,6 +20,7 @@ type BookingRow = Database["public"]["Tables"]["bookings"]["Row"];
 type AnnouncementRow = Database["public"]["Tables"]["announcements"]["Row"];
 type WaitlistEntryRow = Database["public"]["Tables"]["waitlist_entries"]["Row"];
 type TrialRequestRow = Database["public"]["Tables"]["trial_requests"]["Row"];
+type WaiverRow = Database["public"]["Tables"]["waivers"]["Row"];
 
 export function mapProfile(row: ProfileRow): Profile {
   return {
@@ -105,6 +108,23 @@ export function mapAnnouncement(row: AnnouncementRow): Announcement {
     isPublished: row.is_published,
     publishedAt: row.published_at,
     createdBy: row.created_by,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+export function mapWaiver(row: WaiverRow): Waiver {
+  return {
+    id: row.id,
+    profileId: row.profile_id,
+    provider: row.provider,
+    providerRequestId: row.provider_request_id,
+    // `status` is a plain checked text column, not a Postgres enum, so the
+    // generated type is a bare `string` -- narrow it here.
+    status: row.status as WaiverStatus,
+    waiverVersion: row.waiver_version,
+    documentUrl: row.document_url,
+    signedAt: row.signed_at,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

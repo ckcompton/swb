@@ -16,3 +16,8 @@ export const APP_LIMITS = {
 } as const;
 
 export const TRAINER_PHOTOS_BUCKET = "trainer-photos";
+
+// Bump when the waiver's legal text changes. Existing signed waivers are not
+// invalidated automatically -- see plan doc for the re-sign-on-version-change
+// follow-up.
+export const WAIVER_VERSION = "v1";

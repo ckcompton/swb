@@ -3,6 +3,7 @@ import {
   getActiveMembershipForProfile,
   getUpcomingBookingsForProfile,
   getUpcomingSessionsWithCounts,
+  getWaiverForProfile,
 } from "@boxing-gym/data-access";
 import { createClient } from "@/lib/supabase/server";
 import { requireMember } from "@/lib/auth";
@@ -16,10 +17,11 @@ export default async function MemberSchedulePage() {
   const auth = await requireMember();
   const supabase = await createClient();
 
-  const [sessions, membership, bookings] = await Promise.all([
+  const [sessions, membership, bookings, waiver] = await Promise.all([
     getUpcomingSessionsWithCounts(supabase),
     getActiveMembershipForProfile(supabase, auth.userId),
     getUpcomingBookingsForProfile(supabase, auth.userId),
+    getWaiverForProfile(supabase, auth.userId),
   ]);
 
   const bookedClassSessionIds = new Set(bookings.map((b) => b.classSessionId));
@@ -31,6 +33,7 @@ export default async function MemberSchedulePage() {
         sessions={sessions}
         bookedClassSessionIds={bookedClassSessionIds}
         membership={membership}
+        waiverSigned={waiver?.status === "signed"}
       />
     </div>
   );

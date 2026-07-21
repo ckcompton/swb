@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createMembership, updateMembership } from "@boxing-gym/data-access";
+import { createMembership, resetWaiverForProfile, updateMembership } from "@boxing-gym/data-access";
 import { membershipInputSchema, updateMembershipStatusSchema } from "@boxing-gym/domain";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth";
@@ -57,6 +57,25 @@ export async function updateMembershipStatusAction(formData: FormData): Promise<
     });
   } catch {
     return { success: false, error: "Could not update membership." };
+  }
+
+  revalidatePath("/admin/members");
+  return { success: true };
+}
+
+export async function resetWaiverAction(formData: FormData): Promise<AdminActionResult> {
+  await requireAdmin();
+
+  const profileId = formData.get("profileId");
+  if (typeof profileId !== "string" || !profileId) {
+    return { success: false, error: "Invalid request." };
+  }
+
+  const supabase = await createClient();
+  try {
+    await resetWaiverForProfile(supabase, profileId);
+  } catch {
+    return { success: false, error: "Could not reset waiver." };
   }
 
   revalidatePath("/admin/members");

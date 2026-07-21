@@ -1,7 +1,9 @@
+import Link from "next/link";
 import type { ClassSessionWithCounts, Membership } from "@boxing-gym/domain";
 import { canBookClass, isMembershipActive } from "@boxing-gym/domain";
 import { formatDate, formatTime, capacityLabel } from "@boxing-gym/utils";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookClassButton } from "@/features/bookings/book-class-button";
 
@@ -9,10 +11,12 @@ export function MemberScheduleList({
   sessions,
   bookedClassSessionIds,
   membership,
+  waiverSigned,
 }: {
   sessions: ClassSessionWithCounts[];
   bookedClassSessionIds: Set<string>;
   membership: Membership | null;
+  waiverSigned: boolean;
 }) {
   const membershipActive = isMembershipActive(membership);
 
@@ -30,6 +34,12 @@ export function MemberScheduleList({
           to activate your membership.
         </p>
       )}
+      {membershipActive && !waiverSigned && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-muted p-3 text-sm text-muted-foreground">
+          <span>Please sign the liability waiver before booking a class.</span>
+          <Button size="sm" render={<Link href="/dashboard/waiver">Sign waiver</Link>} />
+        </div>
+      )}
       {byDate.map(([date, items]) => (
         <div key={date}>
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
@@ -38,7 +48,8 @@ export function MemberScheduleList({
           <div className="grid gap-4 sm:grid-cols-2">
             {items.map((session) => {
               const alreadyBooked = bookedClassSessionIds.has(session.id);
-              const bookable = membershipActive && canBookClass(session) && !alreadyBooked;
+              const bookable =
+                membershipActive && waiverSigned && canBookClass(session) && !alreadyBooked;
 
               return (
                 <Card key={session.id}>
@@ -72,9 +83,11 @@ export function MemberScheduleList({
                         disabledLabel={
                           !membershipActive
                             ? "Membership inactive"
-                            : session.bookedCount >= session.capacity
-                              ? "Full"
-                              : "Unavailable"
+                            : !waiverSigned
+                              ? "Waiver required"
+                              : session.bookedCount >= session.capacity
+                                ? "Full"
+                                : "Unavailable"
                         }
                       />
                     )}

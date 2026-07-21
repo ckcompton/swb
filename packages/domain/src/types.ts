@@ -6,6 +6,7 @@ import type {
   TrialExperienceLevel,
   TrialRequestStatus,
   WaitlistStatus,
+  WaiverStatus,
 } from "@boxing-gym/config";
 
 export interface Profile {
@@ -124,4 +125,17 @@ export interface TrialRequest {
 
 export interface TrialRequestWithSession extends TrialRequest {
   classSession: ClassSession;
+}
+
+export interface Waiver {
+  id: string;
+  profileId: string;
+  provider: string;
+  providerRequestId: string | null;
+  status: WaiverStatus;
+  waiverVersion: string;
+  documentUrl: string | null;
+  signedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 }

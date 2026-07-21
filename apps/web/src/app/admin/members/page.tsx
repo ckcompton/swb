@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { listMembersWithMemberships } from "@boxing-gym/data-access";
+import { listMembersWithMemberships, listSignedWaiverStatuses } from "@boxing-gym/data-access";
 import { isMembershipActive, membershipStatusLabel } from "@boxing-gym/domain";
-import { formatDisplayName } from "@boxing-gym/utils";
+import { formatDate, formatDisplayName } from "@boxing-gym/utils";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -14,6 +14,7 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth";
 import { MembershipEditor } from "@/features/admin/members/membership-editor";
+import { ResetWaiverButton } from "@/features/admin/members/reset-waiver-button";
 
 export const metadata: Metadata = {
   title: "Members",
@@ -23,6 +24,10 @@ export default async function AdminMembersPage() {
   await requireAdmin();
   const supabase = await createClient();
   const members = await listMembersWithMemberships(supabase);
+  const waivers = await listSignedWaiverStatuses(
+    supabase,
+    members.map((member) => member.id),
+  );
 
   return (
     <div>
@@ -39,6 +44,7 @@ export default async function AdminMembersPage() {
                 <TableHead>Phone</TableHead>
                 <TableHead>Plan</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Waiver</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -58,6 +64,33 @@ export default async function AdminMembersPage() {
                     >
                       {membershipStatusLabel(member.membership)}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {(() => {
+                      const waiver = waivers.get(member.id);
+                      if (!waiver?.signedAt) {
+                        return <Badge variant="secondary">Not signed</Badge>;
+                      }
+                      return (
+                        <div className="flex items-center gap-2">
+                          <Badge>Signed {formatDate(waiver.signedAt)}</Badge>
+                          {waiver.documentUrl && (
+                            <a
+                              href={waiver.documentUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
+                            >
+                              View
+                            </a>
+                          )}
+                          <ResetWaiverButton
+                            profileId={member.id}
+                            memberName={formatDisplayName(member.firstName, member.lastName)}
+                          />
+                        </div>
+                      );
+                    })()}
                   </TableCell>
                   <TableCell className="text-right">
                     <MembershipEditor
