@@ -103,7 +103,8 @@
       "Bash(open https://*)",
       "Read(//Users/camcom/swb/**)",
       "Edit(//Users/camcom/swb/**)",
-      "Write(//Users/camcom/swb/**)"
+      "Write(//Users/camcom/swb/**)",
+      "Skill"
     ],
     "deny": [
       "Bash(git push*)",

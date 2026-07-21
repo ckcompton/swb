@@ -1,5 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { WaitlistEntry, WaitlistEntryWithProfile, WaitlistEntryWithSession } from "@boxing-gym/domain";
+import type {
+  WaitlistEntry,
+  WaitlistEntryWithProfile,
+  WaitlistEntryWithSession,
+} from "@boxing-gym/domain";
 import { BookingError, mapPostgresErrorToBookingErrorCode } from "@boxing-gym/domain";
 import type { Database } from "../database.types";
 import { mapClassSession, mapProfile, mapWaitlistEntry } from "../mappers";

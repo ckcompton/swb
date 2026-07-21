@@ -9,8 +9,16 @@ export const trialRequestStatusSchema = z.enum(TRIAL_REQUEST_STATUSES);
 // validation silently (see createTrialRequestAction), without revealing to
 // the caller that a honeypot check exists.
 export const trialRequestInputSchema = z.object({
-  firstName: z.string().trim().min(1, "First name is required").max(APP_LIMITS.trialRequestNameMaxLength),
-  lastName: z.string().trim().min(1, "Last name is required").max(APP_LIMITS.trialRequestNameMaxLength),
+  firstName: z
+    .string()
+    .trim()
+    .min(1, "First name is required")
+    .max(APP_LIMITS.trialRequestNameMaxLength),
+  lastName: z
+    .string()
+    .trim()
+    .min(1, "Last name is required")
+    .max(APP_LIMITS.trialRequestNameMaxLength),
   email: z.string().trim().toLowerCase().email("Enter a valid email address"),
   phone: z
     .string()

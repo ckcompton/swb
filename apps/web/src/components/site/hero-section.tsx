@@ -7,7 +7,7 @@ export function HeroSection() {
     <section className="relative border-b border-border">
       <div
         aria-hidden
-        className="absolute inset-0 scale-x-[-1] bg-[url('/boxing-background.png')] bg-cover bg-center contrast-125 saturate-75 brightness-75"
+        className="absolute inset-0 bg-[url('/hero-background.jpg')] bg-contain bg-right bg-no-repeat contrast-110"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/20" />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />

@@ -80,12 +80,12 @@ describe("canBookClass", () => {
 
 describe("canJoinWaitlist", () => {
   it("requires bookable but full", () => {
-    expect(
-      canJoinWaitlist(makeSessionWithCounts({ capacity: 10, bookedCount: 10 }), NOW),
-    ).toBe(true);
-    expect(
-      canJoinWaitlist(makeSessionWithCounts({ capacity: 10, bookedCount: 9 }), NOW),
-    ).toBe(false);
+    expect(canJoinWaitlist(makeSessionWithCounts({ capacity: 10, bookedCount: 10 }), NOW)).toBe(
+      true,
+    );
+    expect(canJoinWaitlist(makeSessionWithCounts({ capacity: 10, bookedCount: 9 }), NOW)).toBe(
+      false,
+    );
     expect(
       canJoinWaitlist(
         makeSessionWithCounts({ status: "canceled", capacity: 10, bookedCount: 10 }),

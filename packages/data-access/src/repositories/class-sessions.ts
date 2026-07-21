@@ -156,9 +156,7 @@ export async function updateClassSession(
       ...(input.startsAt !== undefined ? { starts_at: input.startsAt } : {}),
       ...(input.endsAt !== undefined ? { ends_at: input.endsAt } : {}),
       ...(input.capacity !== undefined ? { capacity: input.capacity } : {}),
-      ...(input.allowsFreeTrial !== undefined
-        ? { allows_free_trial: input.allowsFreeTrial }
-        : {}),
+      ...(input.allowsFreeTrial !== undefined ? { allows_free_trial: input.allowsFreeTrial } : {}),
       ...(input.status !== undefined ? { status: input.status } : {}),
     })
     .eq("id", sessionId)

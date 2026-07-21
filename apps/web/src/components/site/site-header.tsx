@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { DESIGN_TOKENS } from "@boxing-gym/config";
 import { Button } from "@/components/ui/button";
 import { getAuthContext } from "@/lib/auth";
@@ -19,8 +20,15 @@ export async function SiteHeader() {
   return (
     <header className="border-b border-border bg-card">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="font-heading text-lg font-bold tracking-tight uppercase">
-          {DESIGN_TOKENS.siteName}
+        <Link href="/" className="shrink-0">
+          <Image
+            src="/logo-v2.png"
+            alt={DESIGN_TOKENS.siteName}
+            width={1100}
+            height={475}
+            priority
+            className="h-10 w-auto"
+          />
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex">
