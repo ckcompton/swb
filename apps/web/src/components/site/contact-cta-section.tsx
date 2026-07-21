@@ -11,7 +11,7 @@ const CONTACT = {
 
 export function ContactCtaSection() {
   return (
-    <section id="contact" className="border-t border-border bg-background">
+    <section id="contact" className="bg-atmosphere-deep border-t border-border">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-16 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-xl">
           <h2 className="font-heading text-3xl font-bold tracking-tight uppercase sm:text-4xl">

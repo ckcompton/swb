@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Oswald } from "next/font/google";
+import { Geist, Geist_Mono, Oswald, Permanent_Marker } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { DESIGN_TOKENS } from "@boxing-gym/config";
 import "./globals.css";
@@ -20,6 +20,12 @@ const oswald = Oswald({
   weight: ["500", "600", "700"],
 });
 
+const permanentMarker = Permanent_Marker({
+  variable: "--font-permanent-marker",
+  subsets: ["latin"],
+  weight: "400",
+});
+
 export const metadata: Metadata = {
   title: {
     default: DESIGN_TOKENS.siteName,
@@ -36,7 +42,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${geistSans.variable} ${geistMono.variable} ${oswald.variable} h-full antialiased`}
+      className={`dark ${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${permanentMarker.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         {children}

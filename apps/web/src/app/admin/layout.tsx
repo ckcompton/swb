@@ -7,7 +7,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="flex min-h-full flex-col">
-      <AppHeader profile={auth.profile} homeHref="/admin" />
+      <AppHeader profile={auth.profile} />
       <AdminNav />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">{children}</main>
     </div>

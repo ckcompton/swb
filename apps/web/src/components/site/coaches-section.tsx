@@ -17,7 +17,7 @@ export async function CoachesSection() {
   }
 
   return (
-    <section className="border-t border-border bg-card/40 py-20">
+    <section className="bg-atmosphere-glow-b border-t border-border py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mb-10 text-center">
           <h2 className="font-heading text-3xl font-bold tracking-tight uppercase sm:text-4xl">

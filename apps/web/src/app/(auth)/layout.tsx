@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative flex min-h-full flex-col items-center justify-center bg-background px-4 py-16">
+    <div className="bg-atmosphere relative flex min-h-full flex-col items-center justify-center px-4 py-16">
       <Button
         variant="ghost"
         size="icon"

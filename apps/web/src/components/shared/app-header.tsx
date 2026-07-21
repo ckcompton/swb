@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { formatDisplayName, formatInitials } from "@boxing-gym/utils";
 import { DESIGN_TOKENS } from "@boxing-gym/config";
@@ -6,12 +7,19 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { logoutAction } from "@/features/auth/actions";
 
-export function AppHeader({ profile, homeHref }: { profile: Profile; homeHref: string }) {
+export function AppHeader({ profile }: { profile: Profile }) {
   return (
-    <header className="border-b border-border bg-card">
+    <header className="bg-atmosphere-panel border-b border-border">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href={homeHref} className="text-lg font-bold tracking-tight uppercase">
-          {DESIGN_TOKENS.siteName}
+        <Link href="/" className="shrink-0">
+          <Image
+            src="/logo-v2.png"
+            alt={DESIGN_TOKENS.siteName}
+            width={1100}
+            height={475}
+            priority
+            className="h-10 w-auto"
+          />
         </Link>
 
         <div className="flex items-center gap-3">

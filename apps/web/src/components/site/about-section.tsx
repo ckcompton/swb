@@ -10,7 +10,7 @@ const VALUES = [
 
 export function AboutSection() {
   return (
-    <section id="about" className="border-t border-border bg-card/40 py-20">
+    <section id="about" className="bg-atmosphere-glow-a border-t border-border py-20">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.5fr] lg:items-center">
         <div>
           <h2 className="font-heading text-3xl font-bold tracking-tight uppercase sm:text-4xl">
