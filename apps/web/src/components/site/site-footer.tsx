@@ -8,7 +8,16 @@ export function SiteFooter() {
         <p>
           &copy; {new Date().getFullYear()} {DESIGN_TOKENS.siteName}. All rights reserved.
         </p>
-        <nav className="flex gap-6">
+        <nav className="flex flex-wrap gap-6">
+          <Link href="/#about" className="underline-offset-4 hover:text-foreground hover:underline">
+            About
+          </Link>
+          <Link
+            href="/trainers"
+            className="underline-offset-4 hover:text-foreground hover:underline"
+          >
+            Coaches
+          </Link>
           <Link
             href="/schedule"
             className="underline-offset-4 hover:text-foreground hover:underline"
@@ -16,16 +25,16 @@ export function SiteFooter() {
             Schedule
           </Link>
           <Link
-            href="/trainers"
-            className="underline-offset-4 hover:text-foreground hover:underline"
-          >
-            Trainers
-          </Link>
-          <Link
             href="/pricing"
             className="underline-offset-4 hover:text-foreground hover:underline"
           >
             Pricing
+          </Link>
+          <Link
+            href="/#contact"
+            className="underline-offset-4 hover:text-foreground hover:underline"
+          >
+            Contact
           </Link>
         </nav>
       </div>
