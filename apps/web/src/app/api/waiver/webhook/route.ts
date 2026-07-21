@@ -63,7 +63,21 @@ export async function POST(request: Request) {
       const waiver = await markWaiverSigned(supabase, event.signatureRequestId, documentUrl);
       console.log("waiver webhook: waiver marked signed", waiver.id, waiver.profileId);
     } catch (error) {
-      console.error("waiver webhook: failed to mark waiver signed", error);
+      // A member can end up with more than one pending waiver row (e.g. they
+      // opened the sign flow more than once). If a different one of their
+      // sessions already won the single-signed-waiver-per-member slot
+      // (enforced by the waivers_unique_signed index), this insert/update
+      // collides with code 23505 -- expected, not a real failure.
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        error.code === "23505"
+      ) {
+        console.log("waiver webhook: member already has a signed waiver, ignoring", error);
+      } else {
+        console.error("waiver webhook: failed to mark waiver signed", error);
+      }
       // Still ack so Dropbox Sign doesn't retry indefinitely. If this fails,
       // the member's waiver stays "pending" and they'll see the sign flow
       // again, which is safe (idempotent on their end too).
