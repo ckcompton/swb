@@ -45,7 +45,7 @@ export async function createEmbeddedSignatureRequestFromTemplate(
       client_id: input.clientId,
       template_ids: [input.templateId],
       test_mode: input.testMode ?? false,
-      signers: [{ role: "Signer", name: input.signerName, email_address: input.signerEmail }],
+      signers: [{ role: "SWB Waiver", name: input.signerName, email_address: input.signerEmail }],
     }),
   });
 
