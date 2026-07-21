@@ -49,6 +49,7 @@ export function MembershipEditor({
       if (membership) {
         formData.set("membershipId", membership.id);
         formData.set("status", status);
+        formData.set("planName", planName);
         result = await updateMembershipStatusAction(formData);
       } else {
         formData.set("profileId", profileId);
@@ -83,12 +84,10 @@ export function MembershipEditor({
         </DialogHeader>
 
         <div className="space-y-4">
-          {!membership && (
-            <div className="space-y-2">
-              <Label htmlFor="planName">Plan name</Label>
-              <Input id="planName" value={planName} onChange={(e) => setPlanName(e.target.value)} />
-            </div>
-          )}
+          <div className="space-y-2">
+            <Label htmlFor="planName">Plan name</Label>
+            <Input id="planName" value={planName} onChange={(e) => setPlanName(e.target.value)} />
+          </div>
 
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>

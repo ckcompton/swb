@@ -43,6 +43,7 @@ export async function updateMembershipStatusAction(formData: FormData): Promise<
   const parsed = updateMembershipStatusSchema.safeParse({
     membershipId: formData.get("membershipId"),
     status: formData.get("status"),
+    planName: formData.get("planName") || undefined,
   });
   if (!parsed.success) {
     return { success: false, error: "Invalid request." };
@@ -50,7 +51,10 @@ export async function updateMembershipStatusAction(formData: FormData): Promise<
 
   const supabase = await createClient();
   try {
-    await updateMembership(supabase, parsed.data.membershipId, { status: parsed.data.status });
+    await updateMembership(supabase, parsed.data.membershipId, {
+      status: parsed.data.status,
+      planName: parsed.data.planName,
+    });
   } catch {
     return { success: false, error: "Could not update membership." };
   }

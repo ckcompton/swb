@@ -13,5 +13,6 @@ export type MembershipInput = z.infer<typeof membershipInputSchema>;
 export const updateMembershipStatusSchema = z.object({
   membershipId: z.string().uuid(),
   status: z.enum(MEMBERSHIP_STATUSES),
+  planName: z.string().trim().min(1, "Plan name is required").max(150).optional(),
 });
 export type UpdateMembershipStatusInput = z.infer<typeof updateMembershipStatusSchema>;
