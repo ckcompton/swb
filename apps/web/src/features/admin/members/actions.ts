@@ -74,7 +74,8 @@ export async function resetWaiverAction(formData: FormData): Promise<AdminAction
   const supabase = await createClient();
   try {
     await resetWaiverForProfile(supabase, profileId);
-  } catch {
+  } catch (error) {
+    console.error("resetWaiverAction: resetWaiverForProfile threw", error);
     return { success: false, error: "Could not reset waiver." };
   }
 

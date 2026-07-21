@@ -24,6 +24,7 @@
       "Bash(npx *)",
       "Bash(turbo *)",
       "Bash(supabase *)",
+      "Bash(ngrok *)",
       "Bash(git status*)",
       "Bash(git diff*)",
       "Bash(git log*)",
