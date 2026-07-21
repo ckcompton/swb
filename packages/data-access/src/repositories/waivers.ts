@@ -27,13 +27,25 @@ export async function createPendingWaiver(
   return mapWaiver(data);
 }
 
-// The most recent waiver attempt for a member, whatever its status --
-// callers check `.status === "signed"` for the booking gate, or use a
-// pending row to resume/re-open an in-progress signing session.
+// A member's signed waiver if they have one (at most one can exist, per the
+// waivers_unique_signed index) -- otherwise their most recent attempt,
+// whatever its status, so a pending row can be resumed. Signed always wins
+// regardless of recency: a member can accumulate multiple abandoned/retried
+// pending rows after already signing (e.g. re-opening the sign flow), and
+// those must never shadow the fact that they're already signed.
 export async function getWaiverForProfile(
   client: SupabaseClient<Database>,
   profileId: string,
 ): Promise<Waiver | null> {
+  const { data: signed, error: signedError } = await client
+    .from("waivers")
+    .select("*")
+    .eq("profile_id", profileId)
+    .eq("status", "signed")
+    .maybeSingle();
+  if (signedError) throw signedError;
+  if (signed) return mapWaiver(signed);
+
   const { data, error } = await client
     .from("waivers")
     .select("*")
