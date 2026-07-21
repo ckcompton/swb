@@ -50,7 +50,8 @@ export async function startWaiverSigningAction(): Promise<StartWaiverSigningResu
 
     const { signUrl } = await getEmbeddedSignUrl({ apiKey, signatureId });
     return { success: true, signUrl, clientId };
-  } catch {
+  } catch (error) {
+    console.error("startWaiverSigningAction failed", error);
     return { success: false, error: "Could not start the waiver signing session. Try again." };
   }
 }

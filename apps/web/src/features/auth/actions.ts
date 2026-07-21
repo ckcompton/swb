@@ -28,6 +28,15 @@ export async function loginAction(formData: FormData): Promise<ActionResult> {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error || !data.user) {
+    if (error) {
+      console.error("loginAction: signInWithPassword failed", error.code, error.message);
+    }
+    if (error?.code === "email_not_confirmed") {
+      return {
+        success: false,
+        error: "Please confirm your email before logging in — check your inbox (and spam folder).",
+      };
+    }
     return { success: false, error: "Invalid email or password." };
   }
 

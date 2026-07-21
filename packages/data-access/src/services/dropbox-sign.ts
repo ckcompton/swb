@@ -50,7 +50,10 @@ export async function createEmbeddedSignatureRequestFromTemplate(
   });
 
   if (!response.ok) {
-    throw new Error(`Dropbox Sign create_embedded_with_template failed: ${response.status}`);
+    const body = await response.text();
+    throw new Error(
+      `Dropbox Sign create_embedded_with_template failed: ${response.status} ${body}`,
+    );
   }
 
   const data = await response.json();
@@ -81,7 +84,8 @@ export async function getEmbeddedSignUrl(
   });
 
   if (!response.ok) {
-    throw new Error(`Dropbox Sign embedded/sign_url failed: ${response.status}`);
+    const body = await response.text();
+    throw new Error(`Dropbox Sign embedded/sign_url failed: ${response.status} ${body}`);
   }
 
   const data = await response.json();
@@ -100,7 +104,8 @@ export async function getSignedFileUrl(input: GetSignedFileUrlInput): Promise<st
   );
 
   if (!response.ok) {
-    throw new Error(`Dropbox Sign signature_request/files failed: ${response.status}`);
+    const body = await response.text();
+    throw new Error(`Dropbox Sign signature_request/files failed: ${response.status} ${body}`);
   }
 
   const data = await response.json();
