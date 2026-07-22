@@ -1,43 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { startWaiverSigningAction } from "@/features/waiver/actions";
 
-type Status = "idle" | "loading" | "signing" | "signed" | "error";
+type Status = "signing" | "signed";
 
-export function WaiverSigner() {
+export function WaiverSigner({ formUrl }: { formUrl: string }) {
   const router = useRouter();
-  const [status, setStatus] = useState<Status>("idle");
-  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<Status>("signing");
 
-  const onStart = async () => {
-    setStatus("loading");
-    setError(null);
-
-    const result = await startWaiverSigningAction();
-    if (!result.success || !result.signUrl || !result.clientId) {
-      setStatus("error");
-      setError(result.error ?? "Something went wrong.");
-      return;
+  useEffect(() => {
+    // Jotform's thank-you page posts { action: "submission-completed" } to
+    // the parent window when embedded. This isn't a documented/stable API
+    // (Jotform's own support says it may change), so it's a best-effort
+    // signal -- the "I've finished signing" button below is the guaranteed
+    // fallback. Either way, the waivers row only flips to "signed" once the
+    // webhook lands server-side; this is just UI state.
+    function onMessage(event: MessageEvent) {
+      const data = event.data;
+      const action = typeof data === "string" ? tryParseAction(data) : data?.action;
+      if (action === "submission-completed") {
+        setStatus("signed");
+      }
     }
-
-    setStatus("signing");
-    const { default: HelloSign } = await import("hellosign-embedded");
-    const client = new HelloSign({ clientId: result.clientId });
-
-    client.on("sign", () => {
-      // The waivers row flips to "signed" once Dropbox Sign's webhook lands
-      // (usually within seconds) -- not immediately here.
-      setStatus("signed");
-    });
-    client.on("close", () => {
-      setStatus((current) => (current === "signed" ? current : "idle"));
-    });
-
-    client.open(result.signUrl, { clientId: result.clientId, skipDomainVerification: true });
-  };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
 
   if (status === "signed") {
     return (
@@ -52,10 +41,25 @@ export function WaiverSigner() {
 
   return (
     <div className="space-y-4">
-      {error && <p className="text-sm text-destructive">{error}</p>}
-      <Button onClick={onStart} disabled={status === "loading" || status === "signing"}>
-        {status === "loading" ? "Starting…" : "Read and sign waiver"}
+      <iframe
+        src={formUrl}
+        title="Liability waiver"
+        className="h-[70vh] w-full rounded-md border border-border"
+      />
+      <p className="text-sm text-muted-foreground">
+        Once you&apos;ve submitted the signed form above, click below to continue.
+      </p>
+      <Button variant="outline" onClick={() => setStatus("signed")}>
+        I&apos;ve finished signing
       </Button>
     </div>
   );
+}
+
+function tryParseAction(data: string): string | undefined {
+  try {
+    return JSON.parse(data)?.action;
+  } catch {
+    return undefined;
+  }
 }

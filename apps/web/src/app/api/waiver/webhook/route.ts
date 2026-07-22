@@ -1,90 +1,70 @@
 import "server-only";
 import { NextResponse } from "next/server";
-import {
-  getSignedFileUrl,
-  markWaiverSigned,
-  parseWebhookPayload,
-  verifyWebhookEventHash,
-} from "@boxing-gym/data-access";
+import { getSubmission, markWaiverSigned, parseWebhookPayload } from "@boxing-gym/data-access";
+import { WAIVER_VERSION } from "@boxing-gym/config";
 import { createServiceRoleClient } from "@/lib/supabase/service-role";
 
-// Dropbox Sign callback. Public endpoint (no user session) -- every write
-// is gated behind HMAC verification of the event payload. Must always
-// respond 200 with the literal body below, or Dropbox Sign will retry (and
-// eventually disable) the callback, including for its own verification
-// ping when the URL is first configured.
-const ACK_BODY = "Hello API Event Received";
-
+// Jotform callback. Public endpoint (no user session), and unlike Dropbox
+// Sign, Jotform doesn't sign its callbacks with an HMAC -- so the posted
+// body is never trusted directly. Instead we take the submissionID from it
+// and re-fetch the authoritative submission from Jotform's API before
+// writing anything, after checking the formID matches our configured form.
 export async function POST(request: Request) {
-  const apiKey = process.env.DROPBOX_SIGN_API_KEY;
-  if (!apiKey) {
-    console.error("waiver webhook: DROPBOX_SIGN_API_KEY missing, cannot verify/process");
-    // Mis/unconfigured -- ack anyway so Dropbox Sign doesn't hammer retries;
-    // there's nothing useful we can verify or persist without the key.
-    return new NextResponse(ACK_BODY);
+  const apiKey = process.env.JOTFORM_API_KEY;
+  const formId = process.env.JOTFORM_WAIVER_FORM_ID;
+  if (!apiKey || !formId) {
+    console.error("waiver webhook: JOTFORM_API_KEY or JOTFORM_WAIVER_FORM_ID missing");
+    return new NextResponse("ok");
   }
 
   const formData = await request.formData();
-  const json = formData.get("json");
-  if (typeof json !== "string") {
-    console.error("waiver webhook: form data missing 'json' field");
-    return new NextResponse(ACK_BODY);
+  const event = parseWebhookPayload(formData);
+  console.log("waiver webhook: received event", event.formId, event.submissionId);
+
+  if (event.formId !== formId) {
+    console.error("waiver webhook: formID mismatch, ignoring", event.formId);
+    return new NextResponse("ok");
+  }
+  if (!event.submissionId) {
+    console.error("waiver webhook: missing submissionID");
+    return new NextResponse("ok");
   }
 
-  let event;
   try {
-    event = parseWebhookPayload(json);
-  } catch (error) {
-    console.error("waiver webhook: parseWebhookPayload threw", error);
-    return new NextResponse(ACK_BODY);
-  }
+    const submission = await getSubmission({
+      apiKey,
+      submissionId: event.submissionId,
+      apiBase: process.env.JOTFORM_API_BASE,
+    });
+    console.log("waiver webhook: fetched submission", submission.formId);
 
-  console.log("waiver webhook: received event", event.eventType, event.signatureRequestId);
-
-  const verified = await verifyWebhookEventHash({
-    apiKey,
-    eventTime: event.eventTime,
-    eventType: event.eventType,
-    eventHash: event.eventHash,
-  });
-  if (!verified) {
-    console.error("waiver webhook: event hash verification failed", event.eventType);
-    return new NextResponse(ACK_BODY);
-  }
-
-  if (event.eventType === "signature_request_all_signed" && event.signatureRequestId) {
-    try {
-      const documentUrl = await getSignedFileUrl({
-        apiKey,
-        signatureRequestId: event.signatureRequestId,
-      });
-      console.log("waiver webhook: got signed file url, marking waiver signed");
-      const supabase = createServiceRoleClient();
-      const waiver = await markWaiverSigned(supabase, event.signatureRequestId, documentUrl);
-      console.log("waiver webhook: waiver marked signed", waiver.id, waiver.profileId);
-    } catch (error) {
-      // A member can end up with more than one pending waiver row (e.g. they
-      // opened the sign flow more than once). If a different one of their
-      // sessions already won the single-signed-waiver-per-member slot
-      // (enforced by the waivers_unique_signed index), this insert/update
-      // collides with code 23505 -- expected, not a real failure.
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "code" in error &&
-        error.code === "23505"
-      ) {
-        console.log("waiver webhook: member already has a signed waiver, ignoring", error);
-      } else {
-        console.error("waiver webhook: failed to mark waiver signed", error);
-      }
-      // Still ack so Dropbox Sign doesn't retry indefinitely. If this fails,
-      // the member's waiver stays "pending" and they'll see the sign flow
-      // again, which is safe (idempotent on their end too).
+    const profileId = submission.answers.memberId;
+    if (!profileId) {
+      console.error("waiver webhook: submission missing memberId answer");
+      return new NextResponse("ok");
     }
-  } else {
-    console.log("waiver webhook: ignoring event type", event.eventType);
+
+    const supabase = createServiceRoleClient();
+    const waiver = await markWaiverSigned(supabase, {
+      profileId,
+      submissionId: event.submissionId,
+      documentUrl: `/api/waiver/document/${event.submissionId}`,
+      waiverVersion: WAIVER_VERSION,
+    });
+    console.log("waiver webhook: waiver marked signed", waiver.id, waiver.profileId);
+  } catch (error) {
+    // A member can submit the form more than once (retry, re-opened tab).
+    // If a different one of their submissions already won the
+    // one-signed-waiver-per-member slot (waivers_unique_signed), this
+    // collides with code 23505 -- expected, not a real failure.
+    if (typeof error === "object" && error !== null && "code" in error && error.code === "23505") {
+      console.log("waiver webhook: member already has a signed waiver, ignoring", error);
+    } else {
+      console.error("waiver webhook: failed to mark waiver signed", error);
+    }
+    // Still ack -- if this fails, the member's waiver stays unsigned and
+    // they'll see the sign flow again, which is safe.
   }
 
-  return new NextResponse(ACK_BODY);
+  return new NextResponse("ok");
 }

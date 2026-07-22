@@ -3,30 +3,6 @@ import type { Waiver } from "@boxing-gym/domain";
 import type { Database } from "../database.types";
 import { mapWaiver } from "../mappers";
 
-export interface CreatePendingWaiverInput {
-  profileId: string;
-  providerRequestId: string;
-  waiverVersion: string;
-}
-
-export async function createPendingWaiver(
-  client: SupabaseClient<Database>,
-  input: CreatePendingWaiverInput,
-): Promise<Waiver> {
-  const { data, error } = await client
-    .from("waivers")
-    .insert({
-      profile_id: input.profileId,
-      provider_request_id: input.providerRequestId,
-      waiver_version: input.waiverVersion,
-      status: "pending",
-    })
-    .select("*")
-    .single();
-  if (error) throw error;
-  return mapWaiver(data);
-}
-
 // A member's signed waiver if they have one (at most one can exist, per the
 // waivers_unique_signed index) -- otherwise their most recent attempt,
 // whatever its status, so a pending row can be resumed. Signed always wins
@@ -57,16 +33,27 @@ export async function getWaiverForProfile(
   return data ? mapWaiver(data) : null;
 }
 
-// Called by the Dropbox Sign webhook handler (after HMAC verification) using
-// a service-role client -- flips the matching pending row to signed.
+export interface MarkWaiverSignedInput {
+  profileId: string;
+  submissionId: string;
+  documentUrl: string;
+  waiverVersion: string;
+}
+
+// Called by the Jotform webhook handler (after re-fetching the submission
+// from Jotform's API) using a service-role client -- idempotently records
+// the member's signed waiver. Unlike the prior Dropbox Sign flow, there's no
+// pre-existing pending row to match -- Jotform gives no id until after
+// submission, so this upserts keyed by profile_id.
 export async function markWaiverSigned(
   client: SupabaseClient<Database>,
-  providerRequestId: string,
-  documentUrl: string,
+  input: MarkWaiverSignedInput,
 ): Promise<Waiver> {
   const { data, error } = await client.rpc("mark_waiver_signed", {
-    p_request_id: providerRequestId,
-    p_document_url: documentUrl,
+    p_profile_id: input.profileId,
+    p_submission_id: input.submissionId,
+    p_document_url: input.documentUrl,
+    p_waiver_version: input.waiverVersion,
   });
   if (error) throw error;
   return mapWaiver(data);

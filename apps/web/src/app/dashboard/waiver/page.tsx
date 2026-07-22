@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getWaiverForProfile } from "@boxing-gym/data-access";
+import { buildWaiverFormUrl, getWaiverForProfile } from "@boxing-gym/data-access";
+import { formatDisplayName } from "@boxing-gym/utils";
 import { createClient } from "@/lib/supabase/server";
 import { requireMember } from "@/lib/auth";
 import { WaiverSigner } from "@/features/waiver/waiver-signer";
@@ -18,6 +19,8 @@ export default async function WaiverPage() {
     redirect("/dashboard/schedule");
   }
 
+  const formId = process.env.JOTFORM_WAIVER_FORM_ID;
+
   return (
     <div className="mx-auto max-w-2xl">
       <h1 className="mb-2 text-2xl font-bold tracking-tight">Liability waiver</h1>
@@ -25,7 +28,20 @@ export default async function WaiverPage() {
         Before you can book a class, please read and sign our liability waiver. You&apos;ll only
         need to do this once.
       </p>
-      <WaiverSigner />
+      {formId ? (
+        <WaiverSigner
+          formUrl={buildWaiverFormUrl({
+            formId,
+            profileId: auth.userId,
+            name: formatDisplayName(auth.profile.firstName, auth.profile.lastName),
+            email: auth.email,
+          })}
+        />
+      ) : (
+        <p className="text-sm text-destructive">
+          Waiver signing is not configured yet. Contact the gym.
+        </p>
+      )}
     </div>
   );
 }

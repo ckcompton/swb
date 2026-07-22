@@ -549,7 +549,12 @@ export type Database = {
         }
       }
       mark_waiver_signed: {
-        Args: { p_document_url: string; p_request_id: string }
+        Args: {
+          p_document_url: string
+          p_profile_id: string
+          p_submission_id: string
+          p_waiver_version: string
+        }
         Returns: {
           created_at: string
           document_url: string | null

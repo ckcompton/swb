@@ -9,4 +9,4 @@ export * from "./repositories/profiles";
 export * from "./repositories/trainer-photos";
 export * from "./repositories/trial-requests";
 export * from "./repositories/waivers";
-export * from "./services/dropbox-sign";
+export * from "./services/jotform";
