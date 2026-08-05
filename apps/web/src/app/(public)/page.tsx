@@ -6,6 +6,7 @@ import { CoachesSection } from "@/components/site/coaches-section";
 import { SchedulePreviewSection } from "@/components/site/schedule-preview-section";
 import { AboutSection } from "@/components/site/about-section";
 import { ContactCtaSection } from "@/components/site/contact-cta-section";
+import { VideoBackground } from "@/components/site/video-background";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -14,7 +15,8 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <div>
+    <div className="relative">
+      <VideoBackground />
       <HeroSection />
       <ProgramsSection />
       <CoachesSection />

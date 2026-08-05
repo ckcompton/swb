@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
-# Idempotent local test-user seeding for the Supabase Auth service.
+# Idempotent local admin account seeding for the Supabase Auth service.
 #
 # supabase/seed.sql cannot create auth.users rows (Supabase Auth owns that
 # table and its password hashing), so every `supabase db reset` wipes all
-# accounts. Run this script afterward to restore a standard set of test
-# accounts: a member with each membership status, one with none, and an
-# admin. Safe to re-run any time - existing accounts/memberships are left
-# untouched, matching accounts are skipped.
+# accounts. Run this script afterward to restore the local admin test
+# account. Safe to re-run any time - an existing account is left untouched.
 #
 # Usage: ./scripts/seed-test-users.sh
 # Requires: local Supabase running (`supabase start`), curl, jq, and either
@@ -76,45 +74,19 @@ signup_or_get() {
   echo "$user_id"
 }
 
-echo "Seeding local test accounts (password for all: $PASSWORD)..."
+echo "Seeding local admin test account (password: $PASSWORD)..."
 
-JANE=$(signup_or_get jane.doe@test.local Jane Doe)
-MARK=$(signup_or_get mark.rivera@test.local Mark Rivera)
-PRIYA=$(signup_or_get priya.singh@test.local Priya Singh)
-LEO=$(signup_or_get leo.tran@test.local Leo Tran)
-SAM=$(signup_or_get sam.okonkwo@test.local Sam Okonkwo)
 ADMIN=$(signup_or_get check-select@test.local Check Select)
 
 run_sql <<SQL
 update public.profiles set role = 'admin' where id = '$ADMIN';
-
-insert into public.memberships (profile_id, plan_name, status, starts_at, ends_at)
-select '$JANE', 'Monthly Unlimited', 'active', now() - interval '10 days', null
-where not exists (select 1 from public.memberships where profile_id = '$JANE');
-
-insert into public.memberships (profile_id, plan_name, status, starts_at, ends_at)
-select '$MARK', 'Annual Unlimited', 'active', now() - interval '2 months', now() + interval '10 months'
-where not exists (select 1 from public.memberships where profile_id = '$MARK');
-
-insert into public.memberships (profile_id, plan_name, status, starts_at, ends_at)
-select '$PRIYA', 'Monthly Unlimited', 'inactive', now() - interval '1 month', null
-where not exists (select 1 from public.memberships where profile_id = '$PRIYA');
-
-insert into public.memberships (profile_id, plan_name, status, starts_at, ends_at)
-select '$LEO', 'Monthly Unlimited', 'expired', now() - interval '3 months', now() - interval '1 month'
-where not exists (select 1 from public.memberships where profile_id = '$LEO');
 SQL
 
 cat <<EOF
 
-Done. Test accounts (password: $PASSWORD):
+Done. Admin test account (password: $PASSWORD):
 
-  jane.doe@test.local       member, active membership
-  mark.rivera@test.local    member, active membership (annual)
-  priya.singh@test.local    member, inactive membership
-  leo.tran@test.local       member, expired membership
-  sam.okonkwo@test.local    member, no membership
   check-select@test.local   admin
 
-Re-run this script any time after 'supabase db reset' to restore these accounts.
+Re-run this script any time after 'supabase db reset' to restore this account.
 EOF

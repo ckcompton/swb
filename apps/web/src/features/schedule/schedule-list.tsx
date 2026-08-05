@@ -1,5 +1,5 @@
-import type { ClassSessionWithCounts } from "@boxing-gym/domain";
-import { formatDate, formatTime, capacityLabel } from "@boxing-gym/utils";
+import type { ClassSession } from "@boxing-gym/domain";
+import { formatDate, formatTime } from "@boxing-gym/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -7,7 +7,7 @@ export function ScheduleList({
   sessions,
   emptyMessage = "No upcoming classes are scheduled right now.",
 }: {
-  sessions: ClassSessionWithCounts[];
+  sessions: ClassSession[];
   emptyMessage?: string;
 }) {
   if (sessions.length === 0) {
@@ -33,18 +33,7 @@ export function ScheduleList({
                       {formatTime(session.startsAt)} &ndash; {formatTime(session.endsAt)}
                     </p>
                   </div>
-                  {session.status === "canceled" ? (
-                    <Badge variant="destructive">Canceled</Badge>
-                  ) : (
-                    <Badge
-                      variant={session.bookedCount >= session.capacity ? "secondary" : "default"}
-                    >
-                      {capacityLabel({
-                        capacity: session.capacity,
-                        bookedCount: session.bookedCount,
-                      })}
-                    </Badge>
-                  )}
+                  {session.status === "canceled" && <Badge variant="destructive">Canceled</Badge>}
                 </CardHeader>
                 <CardContent className="space-y-1 text-sm text-muted-foreground">
                   {session.trainer && <p>Coach {session.trainer.name}</p>}
@@ -59,8 +48,8 @@ export function ScheduleList({
   );
 }
 
-function groupByDate(sessions: ClassSessionWithCounts[]): [string, ClassSessionWithCounts[]][] {
-  const groups = new Map<string, ClassSessionWithCounts[]>();
+function groupByDate(sessions: ClassSession[]): [string, ClassSession[]][] {
+  const groups = new Map<string, ClassSession[]>();
   for (const session of sessions) {
     const key = formatDate(session.startsAt);
     const existing = groups.get(key) ?? [];

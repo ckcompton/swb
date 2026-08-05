@@ -5,12 +5,8 @@ import { DESIGN_TOKENS } from "@boxing-gym/config";
 export function HeroSection() {
   return (
     <section className="relative border-b border-border">
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-[url('/hero-background.jpg')] bg-contain bg-right bg-no-repeat contrast-110"
-      />
-      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/20" />
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/30" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
       <div
         aria-hidden
         className="absolute inset-0 [background-image:var(--texture-noise)] [background-repeat:repeat] [background-size:180px_180px]"
@@ -32,7 +28,7 @@ export function HeroSection() {
           <Button
             size="lg"
             className="h-12 px-8 text-base"
-            render={<Link href="/signup">Book your first session</Link>}
+            render={<Link href="/waiver">Sign the waiver</Link>}
             nativeButton={false}
           />
           <Button

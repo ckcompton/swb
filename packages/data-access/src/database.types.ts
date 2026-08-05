@@ -36,99 +36,12 @@ export type Database = {
   }
   public: {
     Tables: {
-      announcements: {
-        Row: {
-          body: string
-          created_at: string
-          created_by: string | null
-          id: string
-          is_published: boolean
-          published_at: string | null
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          body: string
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          is_published?: boolean
-          published_at?: string | null
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          body?: string
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          is_published?: boolean
-          published_at?: string | null
-          title?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "announcements_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      bookings: {
-        Row: {
-          class_session_id: string
-          created_at: string
-          id: string
-          profile_id: string
-          status: Database["public"]["Enums"]["booking_status"]
-          updated_at: string
-        }
-        Insert: {
-          class_session_id: string
-          created_at?: string
-          id?: string
-          profile_id: string
-          status?: Database["public"]["Enums"]["booking_status"]
-          updated_at?: string
-        }
-        Update: {
-          class_session_id?: string
-          created_at?: string
-          id?: string
-          profile_id?: string
-          status?: Database["public"]["Enums"]["booking_status"]
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bookings_class_session_id_fkey"
-            columns: ["class_session_id"]
-            isOneToOne: false
-            referencedRelation: "class_sessions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bookings_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       class_sessions: {
         Row: {
-          allows_free_trial: boolean
-          capacity: number
           created_at: string
-          created_by: string | null
           description: string | null
           ends_at: string
           id: string
-          series_id: string | null
           starts_at: string
           status: Database["public"]["Enums"]["class_session_status"]
           title: string
@@ -136,14 +49,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          allows_free_trial?: boolean
-          capacity: number
           created_at?: string
-          created_by?: string | null
           description?: string | null
           ends_at: string
           id?: string
-          series_id?: string | null
           starts_at: string
           status?: Database["public"]["Enums"]["class_session_status"]
           title: string
@@ -151,14 +60,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          allows_free_trial?: boolean
-          capacity?: number
           created_at?: string
-          created_by?: string | null
           description?: string | null
           ends_at?: string
           id?: string
-          series_id?: string | null
           starts_at?: string
           status?: Database["public"]["Enums"]["class_session_status"]
           title?: string
@@ -166,13 +71,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "class_sessions_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "class_sessions_trainer_id_fkey"
             columns: ["trainer_id"]
@@ -182,46 +80,35 @@ export type Database = {
           },
         ]
       }
-      memberships: {
+      email_sends: {
         Row: {
           created_at: string
-          ends_at: string | null
+          email_type: string
+          error_message: string | null
           id: string
-          plan_name: string
-          profile_id: string
-          starts_at: string
-          status: Database["public"]["Enums"]["membership_status"]
-          updated_at: string
+          recipient: string
+          resend_id: string | null
+          success: boolean
         }
         Insert: {
           created_at?: string
-          ends_at?: string | null
+          email_type: string
+          error_message?: string | null
           id?: string
-          plan_name: string
-          profile_id: string
-          starts_at?: string
-          status?: Database["public"]["Enums"]["membership_status"]
-          updated_at?: string
+          recipient: string
+          resend_id?: string | null
+          success: boolean
         }
         Update: {
           created_at?: string
-          ends_at?: string | null
+          email_type?: string
+          error_message?: string | null
           id?: string
-          plan_name?: string
-          profile_id?: string
-          starts_at?: string
-          status?: Database["public"]["Enums"]["membership_status"]
-          updated_at?: string
+          recipient?: string
+          resend_id?: string | null
+          success?: boolean
         }
-        Relationships: [
-          {
-            foreignKeyName: "memberships_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -283,288 +170,71 @@ export type Database = {
         }
         Relationships: []
       }
-      trial_requests: {
-        Row: {
-          admin_notes: string | null
-          class_session_id: string
-          created_at: string
-          email: string
-          experience_level: Database["public"]["Enums"]["trial_experience_level"]
-          first_name: string
-          id: string
-          last_name: string
-          message: string | null
-          phone: string
-          status: Database["public"]["Enums"]["trial_request_status"]
-          updated_at: string
-        }
-        Insert: {
-          admin_notes?: string | null
-          class_session_id: string
-          created_at?: string
-          email: string
-          experience_level: Database["public"]["Enums"]["trial_experience_level"]
-          first_name: string
-          id?: string
-          last_name: string
-          message?: string | null
-          phone: string
-          status?: Database["public"]["Enums"]["trial_request_status"]
-          updated_at?: string
-        }
-        Update: {
-          admin_notes?: string | null
-          class_session_id?: string
-          created_at?: string
-          email?: string
-          experience_level?: Database["public"]["Enums"]["trial_experience_level"]
-          first_name?: string
-          id?: string
-          last_name?: string
-          message?: string | null
-          phone?: string
-          status?: Database["public"]["Enums"]["trial_request_status"]
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "trial_requests_class_session_id_fkey"
-            columns: ["class_session_id"]
-            isOneToOne: false
-            referencedRelation: "class_sessions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      waitlist_entries: {
-        Row: {
-          class_session_id: string
-          created_at: string
-          id: string
-          position: number
-          profile_id: string
-          status: Database["public"]["Enums"]["waitlist_status"]
-          updated_at: string
-        }
-        Insert: {
-          class_session_id: string
-          created_at?: string
-          id?: string
-          position: number
-          profile_id: string
-          status?: Database["public"]["Enums"]["waitlist_status"]
-          updated_at?: string
-        }
-        Update: {
-          class_session_id?: string
-          created_at?: string
-          id?: string
-          position?: number
-          profile_id?: string
-          status?: Database["public"]["Enums"]["waitlist_status"]
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "waitlist_entries_class_session_id_fkey"
-            columns: ["class_session_id"]
-            isOneToOne: false
-            referencedRelation: "class_sessions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "waitlist_entries_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       waivers: {
         Row: {
           created_at: string
-          document_url: string | null
+          guardian_name: string | null
           id: string
-          profile_id: string
-          provider: string
-          provider_request_id: string | null
-          signed_at: string | null
-          status: string
-          updated_at: string
+          is_minor: boolean
+          participant_email: string
+          participant_name: string
+          participant_phone: string | null
+          signature_path: string
+          signed_at: string
           waiver_version: string
         }
         Insert: {
           created_at?: string
-          document_url?: string | null
+          guardian_name?: string | null
           id?: string
-          profile_id: string
-          provider?: string
-          provider_request_id?: string | null
-          signed_at?: string | null
-          status?: string
-          updated_at?: string
+          is_minor?: boolean
+          participant_email: string
+          participant_name: string
+          participant_phone?: string | null
+          signature_path: string
+          signed_at?: string
           waiver_version: string
         }
         Update: {
           created_at?: string
-          document_url?: string | null
+          guardian_name?: string | null
           id?: string
-          profile_id?: string
-          provider?: string
-          provider_request_id?: string | null
-          signed_at?: string | null
-          status?: string
-          updated_at?: string
+          is_minor?: boolean
+          participant_email?: string
+          participant_name?: string
+          participant_phone?: string | null
+          signature_path?: string
+          signed_at?: string
           waiver_version?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "waivers_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
-      class_session_booked_counts: {
-        Row: {
-          booked_count: number | null
-          class_session_id: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bookings_class_session_id_fkey"
-            columns: ["class_session_id"]
-            isOneToOne: false
-            referencedRelation: "class_sessions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      class_session_waitlist_counts: {
-        Row: {
-          class_session_id: string | null
-          waitlist_count: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "waitlist_entries_class_session_id_fkey"
-            columns: ["class_session_id"]
-            isOneToOne: false
-            referencedRelation: "class_sessions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
-      book_class_session: {
-        Args: { p_class_session_id: string }
-        Returns: {
-          class_session_id: string
-          created_at: string
-          id: string
-          profile_id: string
-          status: Database["public"]["Enums"]["booking_status"]
-          updated_at: string
-        }
-        SetofOptions: {
-          from: "*"
-          to: "bookings"
-          isOneToOne: true
-          isSetofReturn: false
-        }
-      }
-      cancel_booking: {
-        Args: { p_booking_id: string }
-        Returns: {
-          class_session_id: string
-          created_at: string
-          id: string
-          profile_id: string
-          status: Database["public"]["Enums"]["booking_status"]
-          updated_at: string
-        }
-        SetofOptions: {
-          from: "*"
-          to: "bookings"
-          isOneToOne: true
-          isSetofReturn: false
-        }
-      }
-      has_recent_trial_request: {
-        Args: {
-          p_class_session_id: string
-          p_email: string
-          p_window_minutes: number
-        }
-        Returns: boolean
-      }
       is_admin: { Args: never; Returns: boolean }
-      is_member_eligible_for_session: {
+      sign_waiver_public: {
         Args: {
-          p_profile_id: string
-          p_session: Database["public"]["Tables"]["class_sessions"]["Row"]
-        }
-        Returns: boolean
-      }
-      join_waitlist: {
-        Args: { p_class_session_id: string }
-        Returns: {
-          class_session_id: string
-          created_at: string
-          id: string
-          position: number
-          profile_id: string
-          status: Database["public"]["Enums"]["waitlist_status"]
-          updated_at: string
-        }
-        SetofOptions: {
-          from: "*"
-          to: "waitlist_entries"
-          isOneToOne: true
-          isSetofReturn: false
-        }
-      }
-      leave_waitlist: {
-        Args: { p_waitlist_entry_id: string }
-        Returns: {
-          class_session_id: string
-          created_at: string
-          id: string
-          position: number
-          profile_id: string
-          status: Database["public"]["Enums"]["waitlist_status"]
-          updated_at: string
-        }
-        SetofOptions: {
-          from: "*"
-          to: "waitlist_entries"
-          isOneToOne: true
-          isSetofReturn: false
-        }
-      }
-      mark_waiver_signed: {
-        Args: {
-          p_document_url: string
-          p_profile_id: string
-          p_submission_id: string
+          p_guardian_name: string
+          p_is_minor: boolean
+          p_participant_email: string
+          p_participant_name: string
+          p_participant_phone: string
+          p_signature_path: string
           p_waiver_version: string
         }
         Returns: {
           created_at: string
-          document_url: string | null
+          guardian_name: string | null
           id: string
-          profile_id: string
-          provider: string
-          provider_request_id: string | null
-          signed_at: string | null
-          status: string
-          updated_at: string
+          is_minor: boolean
+          participant_email: string
+          participant_name: string
+          participant_phone: string | null
+          signature_path: string
+          signed_at: string
           waiver_version: string
         }
         SetofOptions: {
@@ -577,17 +247,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "member"
-      booking_status: "booked" | "canceled"
       class_session_status: "scheduled" | "canceled"
-      membership_status: "active" | "inactive" | "expired"
-      trial_experience_level: "none" | "beginner" | "intermediate" | "advanced"
-      trial_request_status:
-        | "pending"
-        | "contacted"
-        | "approved"
-        | "declined"
-        | "completed"
-      waitlist_status: "waiting" | "promoted" | "left"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -719,18 +379,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "member"],
-      booking_status: ["booked", "canceled"],
       class_session_status: ["scheduled", "canceled"],
-      membership_status: ["active", "inactive", "expired"],
-      trial_experience_level: ["none", "beginner", "intermediate", "advanced"],
-      trial_request_status: [
-        "pending",
-        "contacted",
-        "approved",
-        "declined",
-        "completed",
-      ],
-      waitlist_status: ["waiting", "promoted", "left"],
     },
   },
 } as const

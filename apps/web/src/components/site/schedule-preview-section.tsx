@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { getUpcomingSessionsWithCounts } from "@boxing-gym/data-access";
+import { getUpcomingClassSessions } from "@boxing-gym/data-access";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { ScheduleList } from "@/features/schedule/schedule-list";
 
 export async function SchedulePreviewSection() {
   const supabase = await createClient();
-  const sessions = await getUpcomingSessionsWithCounts(supabase);
+  const sessions = await getUpcomingClassSessions(supabase);
   const preview = sessions.slice(0, 4);
 
   return (

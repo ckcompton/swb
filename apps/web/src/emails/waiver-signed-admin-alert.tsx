@@ -1,0 +1,135 @@
+import {
+  Html,
+  Head,
+  Preview,
+  Body,
+  Container,
+  Heading,
+  Text,
+  Button,
+  Hr,
+  Img,
+  Tailwind,
+  pixelBasedPreset,
+} from "react-email";
+
+interface WaiverSignedAdminAlertEmailProps {
+  siteName: string;
+  waiverTitle: string;
+  waiverParagraphs: string[];
+  participantName: string;
+  participantEmail: string;
+  participantPhone: string | null;
+  isMinor: boolean;
+  guardianName: string | null;
+  signedAtLabel: string;
+  waiverVersion: string;
+  signatureDataUrl: string;
+  waiverUrl: string;
+}
+
+export default function WaiverSignedAdminAlertEmail({
+  siteName,
+  waiverTitle,
+  waiverParagraphs,
+  participantName,
+  participantEmail,
+  participantPhone,
+  isMinor,
+  guardianName,
+  signedAtLabel,
+  waiverVersion,
+  signatureDataUrl,
+  waiverUrl,
+}: WaiverSignedAdminAlertEmailProps) {
+  return (
+    <Html lang="en">
+      <Tailwind config={{ presets: [pixelBasedPreset] }}>
+        <Head />
+        <Body className="bg-gray-100 font-sans">
+          <Preview>
+            New waiver signed by {participantName} at {siteName}
+          </Preview>
+          <Container className="mx-auto max-w-xl p-5">
+            <Heading className="text-2xl text-gray-800">New waiver signed</Heading>
+            <Text className="text-base text-gray-800">
+              {participantName} ({participantEmail}) signed a liability waiver on {signedAtLabel}.
+            </Text>
+            <Button
+              href={waiverUrl}
+              className="box-border rounded bg-gray-900 px-5 py-3 text-center text-white no-underline"
+            >
+              View in admin
+            </Button>
+
+            <Hr className="my-6 border border-solid border-gray-300" />
+
+            <Heading as="h2" className="text-xl text-gray-800">
+              {waiverTitle}
+            </Heading>
+            {waiverParagraphs.map((paragraph, index) => (
+              <Text key={index} className="text-sm text-gray-600">
+                {paragraph}
+              </Text>
+            ))}
+
+            <Hr className="my-6 border border-solid border-gray-300" />
+
+            <Text className="text-sm text-gray-800">
+              <strong>Participant:</strong> {participantName}
+              <br />
+              <strong>Email:</strong> {participantEmail}
+              {participantPhone && (
+                <>
+                  <br />
+                  <strong>Phone:</strong> {participantPhone}
+                </>
+              )}
+              {isMinor && guardianName && (
+                <>
+                  <br />
+                  <strong>Parent/guardian:</strong> {guardianName}
+                </>
+              )}
+              <br />
+              <strong>Signed:</strong> {signedAtLabel}
+              <br />
+              <strong>Waiver version:</strong> {waiverVersion}
+            </Text>
+
+            <Text className="mb-2 text-sm text-gray-600">
+              {isMinor ? "Parent/guardian signature" : "Signature"}
+            </Text>
+            <Img
+              src={signatureDataUrl}
+              alt={`${isMinor ? "Guardian" : "Participant"} signature`}
+              width={300}
+              className="rounded border border-solid border-gray-300 bg-white"
+            />
+          </Container>
+        </Body>
+      </Tailwind>
+    </Html>
+  );
+}
+
+WaiverSignedAdminAlertEmail.PreviewProps = {
+  siteName: "Shadow Work Boxing",
+  waiverTitle: "Liability Waiver and Release of Claims",
+  waiverParagraphs: [
+    "In consideration of being permitted to participate in boxing classes...",
+    "I understand that participation in the Program involves inherent risks of injury...",
+  ],
+  participantName: "Jordan Lee",
+  participantEmail: "jordan@example.com",
+  participantPhone: "555-123-4567",
+  isMinor: false,
+  guardianName: null,
+  signedAtLabel: "August 5, 2026",
+  waiverVersion: "v1",
+  signatureDataUrl:
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+  waiverUrl: "https://example.com/admin/waivers/00000000-0000-0000-0000-000000000000",
+} satisfies WaiverSignedAdminAlertEmailProps;
+
+export { WaiverSignedAdminAlertEmail };

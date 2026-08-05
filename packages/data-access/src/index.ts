@@ -1,12 +1,7 @@
 export type { Database, Json } from "./database.types";
 export * from "./repositories/trainers";
 export * from "./repositories/class-sessions";
-export * from "./repositories/memberships";
-export * from "./repositories/bookings";
-export * from "./repositories/waitlist";
-export * from "./repositories/announcements";
 export * from "./repositories/profiles";
 export * from "./repositories/trainer-photos";
-export * from "./repositories/trial-requests";
 export * from "./repositories/waivers";
-export * from "./services/jotform";
+export * from "./repositories/email-sends";

@@ -1,23 +1,20 @@
 export const APP_LIMITS = {
-  minClassCapacity: 1,
-  maxClassCapacity: 200,
   trainerBioMaxLength: 2000,
-  announcementBodyMaxLength: 5000,
-  announcementTitleMaxLength: 200,
-  classTitleMaxLength: 150,
-  classDescriptionMaxLength: 2000,
-  maxRecurringOccurrences: 52,
   trainerPhotoMaxSizeBytes: 5 * 1024 * 1024,
   trainerPhotoAllowedMimeTypes: ["image/jpeg", "image/png", "image/webp"] as const,
-  trialRequestNameMaxLength: 100,
-  trialRequestPhoneMaxLength: 30,
-  trialRequestMessageMaxLength: 1000,
-  trialRequestResubmitWindowMinutes: 60,
+  waiverNameMaxLength: 150,
+  waiverSignatureMaxSizeBytes: 1024 * 1024,
 } as const;
 
 export const TRAINER_PHOTOS_BUCKET = "trainer-photos";
+export const WAIVER_SIGNATURES_BUCKET = "waiver-signatures";
 
 // Bump when the waiver's legal text changes. Existing signed waivers are not
 // invalidated automatically -- see plan doc for the re-sign-on-version-change
 // follow-up.
 export const WAIVER_VERSION = "v1";
+
+// Resend's free-tier daily send cap. Used only to render "N / 100 sent
+// today" on the admin overview -- update if the account moves to a paid
+// plan with a different (or no) daily limit.
+export const RESEND_DAILY_EMAIL_LIMIT = 100;

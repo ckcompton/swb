@@ -17,8 +17,9 @@ export async function CoachesSection() {
   }
 
   return (
-    <section className="bg-atmosphere-glow-b border-t border-border py-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+    <section className="relative border-t border-border py-20">
+      <div aria-hidden className="bg-atmosphere-glow-b absolute inset-0 opacity-85" />
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mb-10 text-center">
           <h2 className="font-heading text-3xl font-bold tracking-tight uppercase sm:text-4xl">
             Meet the team

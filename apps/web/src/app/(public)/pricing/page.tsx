@@ -52,8 +52,7 @@ export default function PricingPage() {
       <div className="mb-12 max-w-2xl">
         <h1 className="text-4xl font-bold tracking-tight">Membership pricing</h1>
         <p className="mt-4 text-lg text-muted-foreground">
-          Straightforward plans. No contracts, no surprise fees. Sign up and an admin will activate
-          your membership.
+          Straightforward plans. No contracts, no surprise fees. Contact us to get started.
         </p>
       </div>
 
@@ -87,7 +86,7 @@ export default function PricingPage() {
               <Button
                 className="w-full"
                 variant={plan.highlighted ? "default" : "outline"}
-                render={<Link href="/signup">Sign up</Link>}
+                render={<Link href="/#contact">Contact us</Link>}
                 nativeButton={false}
               />
             </CardContent>
@@ -96,8 +95,7 @@ export default function PricingPage() {
       </div>
 
       <p className="mt-10 text-sm text-muted-foreground">
-        Pricing is informational. After signing up, a staff member will activate your membership
-        plan at the front desk.
+        Pricing is informational. Contact us to get started.
       </p>
     </div>
   );

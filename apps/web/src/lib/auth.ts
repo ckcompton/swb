@@ -30,15 +30,9 @@ export async function getAuthContext(): Promise<AuthContext | null> {
   return { userId: user.id, email: user.email, profile };
 }
 
-export async function requireMember(): Promise<AuthContext> {
-  const auth = await getAuthContext();
-  if (!auth) redirect("/login");
-  return auth;
-}
-
 export async function requireAdmin(): Promise<AuthContext> {
   const auth = await getAuthContext();
   if (!auth) redirect("/login");
-  if (auth.profile.role !== "admin") redirect("/dashboard");
+  if (auth.profile.role !== "admin") redirect("/");
   return auth;
 }

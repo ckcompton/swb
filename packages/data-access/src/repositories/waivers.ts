@@ -1,94 +1,87 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Waiver } from "@boxing-gym/domain";
+import { WAIVER_SIGNATURES_BUCKET } from "@boxing-gym/config";
 import type { Database } from "../database.types";
 import { mapWaiver } from "../mappers";
 
-// A member's signed waiver if they have one (at most one can exist, per the
-// waivers_unique_signed index) -- otherwise their most recent attempt,
-// whatever its status, so a pending row can be resumed. Signed always wins
-// regardless of recency: a member can accumulate multiple abandoned/retried
-// pending rows after already signing (e.g. re-opening the sign flow), and
-// those must never shadow the fact that they're already signed.
-export async function getWaiverForProfile(
-  client: SupabaseClient<Database>,
-  profileId: string,
-): Promise<Waiver | null> {
-  const { data: signed, error: signedError } = await client
-    .from("waivers")
-    .select("*")
-    .eq("profile_id", profileId)
-    .eq("status", "signed")
-    .maybeSingle();
-  if (signedError) throw signedError;
-  if (signed) return mapWaiver(signed);
-
-  const { data, error } = await client
-    .from("waivers")
-    .select("*")
-    .eq("profile_id", profileId)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (error) throw error;
-  return data ? mapWaiver(data) : null;
+export function buildWaiverSignaturePath(): string {
+  return `${crypto.randomUUID()}.png`;
 }
 
-export interface MarkWaiverSignedInput {
-  profileId: string;
-  submissionId: string;
-  documentUrl: string;
+// Uploads the signature PNG to the private waiver-signatures bucket. Must be
+// called with a service-role client -- there is no auth.uid() for a public
+// signer, so there's no RLS insert policy for anon/authenticated to satisfy.
+export async function uploadWaiverSignature(
+  client: SupabaseClient<Database>,
+  path: string,
+  bytes: Uint8Array,
+): Promise<void> {
+  const { error } = await client.storage.from(WAIVER_SIGNATURES_BUCKET).upload(path, bytes, {
+    contentType: "image/png",
+    upsert: false,
+  });
+  if (error) throw error;
+}
+
+// Short-lived signed URL -- the bucket is private and admin-read-only.
+export async function getWaiverSignatureUrl(
+  client: SupabaseClient<Database>,
+  path: string,
+): Promise<string> {
+  const { data, error } = await client.storage
+    .from(WAIVER_SIGNATURES_BUCKET)
+    .createSignedUrl(path, 60 * 10);
+  if (error) throw error;
+  return data.signedUrl;
+}
+
+export interface SignWaiverPublicInput {
+  participantName: string;
+  participantEmail: string;
+  participantPhone?: string | null;
+  isMinor: boolean;
+  guardianName?: string | null;
+  signaturePath: string;
   waiverVersion: string;
 }
 
-// Called by the Jotform webhook handler (after re-fetching the submission
-// from Jotform's API) using a service-role client -- idempotently records
-// the member's signed waiver. Unlike the prior Dropbox Sign flow, there's no
-// pre-existing pending row to match -- Jotform gives no id until after
-// submission, so this upserts keyed by profile_id.
-export async function markWaiverSigned(
+// The sole public write path -- calls the sign_waiver_public SECURITY
+// DEFINER function, which is the only thing granted insert on this table.
+export async function signWaiverPublic(
   client: SupabaseClient<Database>,
-  input: MarkWaiverSignedInput,
+  input: SignWaiverPublicInput,
 ): Promise<Waiver> {
-  const { data, error } = await client.rpc("mark_waiver_signed", {
-    p_profile_id: input.profileId,
-    p_submission_id: input.submissionId,
-    p_document_url: input.documentUrl,
+  const { data, error } = await client.rpc("sign_waiver_public", {
+    p_participant_name: input.participantName,
+    p_participant_email: input.participantEmail,
+    // The generated RPC arg types are `string` because supabase gen types
+    // doesn't reflect a plpgsql param's SQL nullability -- both are
+    // nullable text params and null is a valid value here.
+    p_participant_phone: (input.participantPhone ?? null) as string,
+    p_is_minor: input.isMinor,
+    p_guardian_name: (input.guardianName ?? null) as string,
+    p_signature_path: input.signaturePath,
     p_waiver_version: input.waiverVersion,
   });
   if (error) throw error;
   return mapWaiver(data);
 }
 
-// Admin-only reset: deletes all waiver rows (pending or signed) for a
-// member so they're prompted to sign again from scratch. Relies on the
-// waivers_admin_manage RLS policy (admin-only, "for all") -- callers must
-// have already verified the caller is an admin.
-export async function resetWaiverForProfile(
-  client: SupabaseClient<Database>,
-  profileId: string,
-): Promise<void> {
-  const { error } = await client.from("waivers").delete().eq("profile_id", profileId);
-  if (error) throw error;
-}
-
-// Batched signed-waiver lookup for the admin members table, mirroring
-// getBookedCounts / getWaitlistCounts.
-export async function listSignedWaiverStatuses(
-  client: SupabaseClient<Database>,
-  profileIds: string[],
-): Promise<Map<string, Waiver>> {
-  const waivers = new Map<string, Waiver>();
-  if (profileIds.length === 0) return waivers;
-
+// Admin-only list, newest first.
+export async function listWaivers(client: SupabaseClient<Database>): Promise<Waiver[]> {
   const { data, error } = await client
     .from("waivers")
     .select("*")
-    .in("profile_id", profileIds)
-    .eq("status", "signed");
+    .order("signed_at", { ascending: false });
   if (error) throw error;
+  return data.map(mapWaiver);
+}
 
-  for (const row of data) {
-    waivers.set(row.profile_id, mapWaiver(row));
-  }
-  return waivers;
+export async function getWaiverById(
+  client: SupabaseClient<Database>,
+  id: string,
+): Promise<Waiver | null> {
+  const { data, error } = await client.from("waivers").select("*").eq("id", id).maybeSingle();
+  if (error) throw error;
+  return data ? mapWaiver(data) : null;
 }

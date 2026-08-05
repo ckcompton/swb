@@ -15,9 +15,8 @@ const NAV_LINKS = [
   { href: "/#about", label: "About" },
   { href: "/#programs", label: "Programs" },
   { href: "/trainers", label: "Coaches" },
-  { href: "/coming-soon", label: "Gallery" },
-  { href: "/schedule", label: "Schedule" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/waiver", label: "Sign Waiver" },
   { href: "/#contact", label: "Contact" },
 ];
 
@@ -25,8 +24,9 @@ export async function SiteHeader() {
   const auth = await getAuthContext();
 
   return (
-    <header className="bg-atmosphere-panel border-b border-border">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+    <header className="relative border-b border-border/60 backdrop-blur-md">
+      <div aria-hidden className="bg-atmosphere-panel absolute inset-0 opacity-60" />
+      <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="shrink-0">
           <Image
             src="/logo-v2.png"
@@ -54,18 +54,9 @@ export async function SiteHeader() {
           <Button
             variant="ghost"
             className="hidden sm:inline-flex"
-            render={
-              auth ? (
-                <Link href={auth.profile.role === "admin" ? "/admin" : "/dashboard"}>
-                  My account
-                </Link>
-              ) : (
-                <Link href="/login">Log in</Link>
-              )
-            }
+            render={<Link href={auth ? "/admin" : "/login"}>Admin login</Link>}
             nativeButton={false}
           />
-          <Button render={<Link href="/signup">Book a session</Link>} nativeButton={false} />
 
           <DropdownMenu>
             <DropdownMenuTrigger

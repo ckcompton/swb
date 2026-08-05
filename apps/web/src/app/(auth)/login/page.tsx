@@ -27,12 +27,9 @@ export default async function LoginPage({
           </p>
         )}
         <LoginForm />
-        <div className="flex justify-between text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground">
           <Link href="/forgot-password" className="hover:text-foreground">
             Forgot password?
-          </Link>
-          <Link href="/signup" className="hover:text-foreground">
-            Create account
           </Link>
         </div>
       </CardContent>

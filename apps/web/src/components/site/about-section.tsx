@@ -10,8 +10,9 @@ const VALUES = [
 
 export function AboutSection() {
   return (
-    <section id="about" className="bg-atmosphere-glow-a border-t border-border py-20">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.5fr] lg:items-center">
+    <section id="about" className="relative border-t border-border py-20">
+      <div aria-hidden className="bg-atmosphere-glow-a absolute inset-0 opacity-85" />
+      <div className="relative mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.5fr] lg:items-center">
         <div>
           <h2 className="font-heading text-3xl font-bold tracking-tight uppercase sm:text-4xl">
             Built in the shadows. <span className="text-gold">Made for more.</span>

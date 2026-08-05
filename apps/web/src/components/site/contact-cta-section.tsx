@@ -11,19 +11,18 @@ const CONTACT = {
 
 export function ContactCtaSection() {
   return (
-    <section id="contact" className="bg-atmosphere-deep border-t border-border">
-      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-16 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
+    <section id="contact" className="relative border-t border-border">
+      <div aria-hidden className="bg-atmosphere-deep absolute inset-0 opacity-85" />
+      <div className="relative mx-auto flex max-w-6xl flex-col gap-10 px-4 py-16 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-xl">
           <h2 className="font-heading text-3xl font-bold tracking-tight uppercase sm:text-4xl">
             Ready to step out of the <span className="text-gold">shadows?</span>
           </h2>
-          <p className="mt-4 text-muted-foreground">
-            Create an account, browse the schedule, and book your first class today.
-          </p>
+          <p className="mt-4 text-muted-foreground">Sign the waiver and come try a class today.</p>
           <Button
             size="lg"
             className="mt-6 h-12 px-8 text-base"
-            render={<Link href="/signup">Book your session</Link>}
+            render={<Link href="/waiver">Sign the waiver</Link>}
             nativeButton={false}
           />
         </div>
