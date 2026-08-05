@@ -58,6 +58,12 @@ alter table public.waivers
   drop column document_url,
   drop column profile_id;
 
+-- No existing rows carry the data these new required columns need (they
+-- were signed under the old Dropbox-Sign/Jotform provider flow being
+-- replaced) -- clear the table before adding not-null columns rather than
+-- attempt a backfill from data that doesn't exist.
+truncate table public.waivers;
+
 alter table public.waivers
   add column participant_name text not null,
   add column participant_email text not null,
