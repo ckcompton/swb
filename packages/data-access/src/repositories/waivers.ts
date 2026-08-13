@@ -37,8 +37,15 @@ export async function getWaiverSignatureUrl(
 
 export interface SignWaiverPublicInput {
   participantName: string;
+  dateOfBirth: string;
   participantEmail: string;
-  participantPhone?: string | null;
+  participantPhone: string;
+  address: string;
+  emergencyContactName: string;
+  emergencyContactRelationship: string;
+  emergencyContactPhone: string;
+  medicalConditions: string;
+  photoConsent: boolean;
   isMinor: boolean;
   guardianName?: string | null;
   signaturePath: string;
@@ -53,12 +60,19 @@ export async function signWaiverPublic(
 ): Promise<Waiver> {
   const { data, error } = await client.rpc("sign_waiver_public", {
     p_participant_name: input.participantName,
+    p_date_of_birth: input.dateOfBirth,
     p_participant_email: input.participantEmail,
-    // The generated RPC arg types are `string` because supabase gen types
-    // doesn't reflect a plpgsql param's SQL nullability -- both are
-    // nullable text params and null is a valid value here.
-    p_participant_phone: (input.participantPhone ?? null) as string,
+    p_participant_phone: input.participantPhone,
+    p_address: input.address,
+    p_emergency_contact_name: input.emergencyContactName,
+    p_emergency_contact_relationship: input.emergencyContactRelationship,
+    p_emergency_contact_phone: input.emergencyContactPhone,
+    p_medical_conditions: input.medicalConditions,
+    p_photo_consent: input.photoConsent,
     p_is_minor: input.isMinor,
+    // The generated RPC arg type is `string` because supabase gen types
+    // doesn't reflect a plpgsql param's SQL nullability -- it's a nullable
+    // text param and null is a valid value here.
     p_guardian_name: (input.guardianName ?? null) as string,
     p_signature_path: input.signaturePath,
     p_waiver_version: input.waiverVersion,

@@ -4,10 +4,11 @@ import { useState, useTransition } from "react";
 import { useForm, useWatch, Controller } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { waiverSignInputSchema, type WaiverSignInput } from "@boxing-gym/domain";
-import { WAIVER_TITLE, WAIVER_PARAGRAPHS, WAIVER_VERSION } from "@boxing-gym/config";
+import { WAIVER_TITLE, WAIVER_SECTIONS, WAIVER_VERSION } from "@boxing-gym/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -28,8 +29,15 @@ export function WaiverSigner() {
     resolver: standardSchemaResolver(waiverSignInputSchema),
     defaultValues: {
       participantName: "",
+      dateOfBirth: "",
       participantEmail: "",
-      participantPhone: undefined,
+      participantPhone: "",
+      address: "",
+      emergencyContactName: "",
+      emergencyContactRelationship: "",
+      emergencyContactPhone: "",
+      medicalConditions: "None",
+      photoConsent: false,
       isMinor: false,
       guardianName: undefined,
       signatureDataUrl: "",
@@ -45,8 +53,15 @@ export function WaiverSigner() {
     startTransition(async () => {
       const formData = new FormData();
       formData.set("participantName", data.participantName);
+      formData.set("dateOfBirth", data.dateOfBirth);
       formData.set("participantEmail", data.participantEmail);
-      if (data.participantPhone) formData.set("participantPhone", data.participantPhone);
+      formData.set("participantPhone", data.participantPhone);
+      formData.set("address", data.address);
+      formData.set("emergencyContactName", data.emergencyContactName);
+      formData.set("emergencyContactRelationship", data.emergencyContactRelationship);
+      formData.set("emergencyContactPhone", data.emergencyContactPhone);
+      formData.set("medicalConditions", data.medicalConditions ?? "None");
+      formData.set("photoConsent", String(data.photoConsent));
       formData.set("isMinor", String(data.isMinor));
       if (data.guardianName) formData.set("guardianName", data.guardianName);
       formData.set("signatureDataUrl", data.signatureDataUrl);
@@ -88,8 +103,17 @@ export function WaiverSigner() {
       </CardHeader>
       <CardContent>
         <div className="max-h-64 space-y-4 overflow-y-auto rounded-md border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
-          {WAIVER_PARAGRAPHS.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
+          {WAIVER_SECTIONS.map((section, index) => (
+            <div key={section.heading}>
+              <p className="mb-1 font-semibold text-foreground">
+                Section {index + 1} — {section.heading}
+              </p>
+              {section.paragraphs.map((paragraph, paragraphIndex) => (
+                <p key={paragraphIndex} className="mb-2 last:mb-0">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
           ))}
         </div>
 
@@ -102,6 +126,16 @@ export function WaiverSigner() {
             {errors.participantName && (
               <p className="text-sm text-destructive" role="alert">
                 {errors.participantName.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="dateOfBirth">Date of birth</Label>
+            <Input id="dateOfBirth" type="date" autoComplete="bday" {...register("dateOfBirth")} />
+            {errors.dateOfBirth && (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.dateOfBirth.message}
               </p>
             )}
           </div>
@@ -122,7 +156,7 @@ export function WaiverSigner() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="participantPhone">Phone (optional)</Label>
+            <Label htmlFor="participantPhone">Phone number</Label>
             <Input
               id="participantPhone"
               type="tel"
@@ -135,6 +169,95 @@ export function WaiverSigner() {
               </p>
             )}
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="address">Address</Label>
+            <Input id="address" autoComplete="street-address" {...register("address")} />
+            {errors.address && (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.address.message}
+              </p>
+            )}
+          </div>
+
+          <Separator />
+
+          <div className="space-y-2">
+            <Label htmlFor="emergencyContactName">Emergency contact name</Label>
+            <Input
+              id="emergencyContactName"
+              autoComplete="name"
+              {...register("emergencyContactName")}
+            />
+            {errors.emergencyContactName && (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.emergencyContactName.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="emergencyContactRelationship">Relationship</Label>
+            <Input
+              id="emergencyContactRelationship"
+              {...register("emergencyContactRelationship")}
+            />
+            {errors.emergencyContactRelationship && (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.emergencyContactRelationship.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="emergencyContactPhone">Emergency contact phone number</Label>
+            <Input id="emergencyContactPhone" type="tel" {...register("emergencyContactPhone")} />
+            {errors.emergencyContactPhone && (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.emergencyContactPhone.message}
+              </p>
+            )}
+          </div>
+
+          <Separator />
+
+          <div className="space-y-2">
+            <Label htmlFor="medicalConditions">
+              Medical conditions, injuries, allergies, or medications
+            </Label>
+            <Textarea
+              id="medicalConditions"
+              placeholder='Write "None" if not applicable'
+              {...register("medicalConditions")}
+            />
+            {errors.medicalConditions && (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.medicalConditions.message}
+              </p>
+            )}
+          </div>
+
+          <Controller
+            control={control}
+            name="photoConsent"
+            render={({ field }) => (
+              <div className="group/field flex items-start gap-2">
+                <Checkbox
+                  id="photoConsent"
+                  className="mt-0.5"
+                  checked={field.value}
+                  onCheckedChange={(checked) => field.onChange(checked === true)}
+                />
+                <Label htmlFor="photoConsent" className="font-normal">
+                  I grant permission for Shadow Work Boxing to photograph and/or video record me (or
+                  my minor child, if applicable) during Activities and use it in print, digital, and
+                  social media materials. Leave unchecked to decline — you may still train.
+                </Label>
+              </div>
+            )}
+          />
+
+          <Separator />
 
           <Controller
             control={control}

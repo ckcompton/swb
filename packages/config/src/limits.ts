@@ -12,7 +12,7 @@ export const WAIVER_SIGNATURES_BUCKET = "waiver-signatures";
 // Bump when the waiver's legal text changes. Existing signed waivers are not
 // invalidated automatically -- see plan doc for the re-sign-on-version-change
 // follow-up.
-export const WAIVER_VERSION = "v1";
+export const WAIVER_VERSION = "v2";
 
 // Resend's free-tier daily send cap. Used only to render "N / 100 sent
 // today" on the admin overview -- update if the account moves to a paid

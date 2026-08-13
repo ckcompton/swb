@@ -2,7 +2,7 @@ import "server-only";
 import type { Waiver } from "@boxing-gym/domain";
 import { logEmailSend } from "@boxing-gym/data-access";
 import { DESIGN_TOKENS, WAIVER_TITLE, WAIVER_PARAGRAPHS } from "@boxing-gym/config";
-import { formatDateTime } from "@boxing-gym/utils";
+import { formatDateTime, formatCalendarDate } from "@boxing-gym/utils";
 import { getResend } from "@/lib/email/client";
 import { env } from "@/lib/env";
 import { createServiceRoleClient } from "@/lib/supabase/service-role";
@@ -47,6 +47,7 @@ export async function sendWaiverSignedEmails(
 
   const resend = getResend();
   const signedAtLabel = formatDateTime(waiver.signedAt);
+  const dateOfBirthLabel = formatCalendarDate(waiver.dateOfBirth);
 
   const jobs: {
     label: string;
@@ -70,8 +71,15 @@ export async function sendWaiverSignedEmails(
                 waiverTitle={WAIVER_TITLE}
                 waiverParagraphs={WAIVER_PARAGRAPHS}
                 participantName={waiver.participantName}
+                dateOfBirthLabel={dateOfBirthLabel}
                 participantEmail={waiver.participantEmail}
                 participantPhone={waiver.participantPhone}
+                address={waiver.address}
+                emergencyContactName={waiver.emergencyContactName}
+                emergencyContactRelationship={waiver.emergencyContactRelationship}
+                emergencyContactPhone={waiver.emergencyContactPhone}
+                medicalConditions={waiver.medicalConditions}
+                photoConsent={waiver.photoConsent}
                 isMinor={waiver.isMinor}
                 guardianName={waiver.guardianName}
                 signedAtLabel={signedAtLabel}
@@ -102,8 +110,15 @@ export async function sendWaiverSignedEmails(
                 waiverTitle={WAIVER_TITLE}
                 waiverParagraphs={WAIVER_PARAGRAPHS}
                 participantName={waiver.participantName}
+                dateOfBirthLabel={dateOfBirthLabel}
                 participantEmail={waiver.participantEmail}
                 participantPhone={waiver.participantPhone}
+                address={waiver.address}
+                emergencyContactName={waiver.emergencyContactName}
+                emergencyContactRelationship={waiver.emergencyContactRelationship}
+                emergencyContactPhone={waiver.emergencyContactPhone}
+                medicalConditions={waiver.medicalConditions}
+                photoConsent={waiver.photoConsent}
                 isMinor={waiver.isMinor}
                 guardianName={waiver.guardianName}
                 signedAtLabel={signedAtLabel}

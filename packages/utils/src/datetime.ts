@@ -26,6 +26,15 @@ export function formatDate(iso: string): string {
   return DATE_FORMAT.format(new Date(iso));
 }
 
+// For plain SQL `date` values (e.g. date of birth) that carry no time or
+// timezone component -- parsing these with `new Date(iso)` reads them as UTC
+// midnight, which rolls back a day once formatted in any UTC-negative
+// timezone. Parsing the y/m/d parts into local-midnight avoids that shift.
+export function formatCalendarDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  return DATE_FORMAT.format(new Date(year, month - 1, day));
+}
+
 export function formatTime(iso: string): string {
   return TIME_FORMAT.format(new Date(iso));
 }

@@ -17,8 +17,15 @@ interface WaiverSignedConfirmationEmailProps {
   waiverTitle: string;
   waiverParagraphs: string[];
   participantName: string;
+  dateOfBirthLabel: string;
   participantEmail: string;
-  participantPhone: string | null;
+  participantPhone: string;
+  address: string;
+  emergencyContactName: string;
+  emergencyContactRelationship: string;
+  emergencyContactPhone: string;
+  medicalConditions: string;
+  photoConsent: boolean;
   isMinor: boolean;
   guardianName: string | null;
   signedAtLabel: string;
@@ -31,8 +38,15 @@ export default function WaiverSignedConfirmationEmail({
   waiverTitle,
   waiverParagraphs,
   participantName,
+  dateOfBirthLabel,
   participantEmail,
   participantPhone,
+  address,
+  emergencyContactName,
+  emergencyContactRelationship,
+  emergencyContactPhone,
+  medicalConditions,
+  photoConsent,
   isMinor,
   guardianName,
   signedAtLabel,
@@ -70,13 +84,20 @@ export default function WaiverSignedConfirmationEmail({
             <Text className="text-sm text-gray-800">
               <strong>Participant:</strong> {participantName}
               <br />
+              <strong>Date of birth:</strong> {dateOfBirthLabel}
+              <br />
               <strong>Email:</strong> {participantEmail}
-              {participantPhone && (
-                <>
-                  <br />
-                  <strong>Phone:</strong> {participantPhone}
-                </>
-              )}
+              <br />
+              <strong>Phone:</strong> {participantPhone}
+              <br />
+              <strong>Address:</strong> {address}
+              <br />
+              <strong>Emergency contact:</strong> {emergencyContactName} (
+              {emergencyContactRelationship}) — {emergencyContactPhone}
+              <br />
+              <strong>Medical disclosure:</strong> {medicalConditions}
+              <br />
+              <strong>Photo/media consent:</strong> {photoConsent ? "Granted" : "Declined"}
               {isMinor && guardianName && (
                 <>
                   <br />
@@ -113,8 +134,15 @@ WaiverSignedConfirmationEmail.PreviewProps = {
     "I understand that participation in the Program involves inherent risks of injury...",
   ],
   participantName: "Jordan Lee",
+  dateOfBirthLabel: "January 1, 1995",
   participantEmail: "jordan@example.com",
   participantPhone: "555-123-4567",
+  address: "123 Main St, Austin, TX 78744",
+  emergencyContactName: "Alex Lee",
+  emergencyContactRelationship: "Spouse",
+  emergencyContactPhone: "555-987-6543",
+  medicalConditions: "None",
+  photoConsent: true,
   isMinor: false,
   guardianName: null,
   signedAtLabel: "August 5, 2026",

@@ -22,8 +22,15 @@ export interface WaiverActionResult {
 export async function signWaiverAction(formData: FormData): Promise<WaiverActionResult> {
   const parsed = waiverSignInputSchema.safeParse({
     participantName: formData.get("participantName"),
+    dateOfBirth: formData.get("dateOfBirth"),
     participantEmail: formData.get("participantEmail"),
     participantPhone: formData.get("participantPhone"),
+    address: formData.get("address"),
+    emergencyContactName: formData.get("emergencyContactName"),
+    emergencyContactRelationship: formData.get("emergencyContactRelationship"),
+    emergencyContactPhone: formData.get("emergencyContactPhone"),
+    medicalConditions: formData.get("medicalConditions"),
+    photoConsent: formData.get("photoConsent") === "true",
     isMinor: formData.get("isMinor") === "true",
     guardianName: formData.get("guardianName"),
     signatureDataUrl: formData.get("signatureDataUrl"),
@@ -54,8 +61,15 @@ export async function signWaiverAction(formData: FormData): Promise<WaiverAction
     const supabase = await createClient();
     waiver = await signWaiverPublic(supabase, {
       participantName: parsed.data.participantName,
+      dateOfBirth: parsed.data.dateOfBirth,
       participantEmail: parsed.data.participantEmail,
       participantPhone: parsed.data.participantPhone,
+      address: parsed.data.address,
+      emergencyContactName: parsed.data.emergencyContactName,
+      emergencyContactRelationship: parsed.data.emergencyContactRelationship,
+      emergencyContactPhone: parsed.data.emergencyContactPhone,
+      medicalConditions: parsed.data.medicalConditions,
+      photoConsent: parsed.data.photoConsent,
       isMinor: parsed.data.isMinor,
       guardianName: parsed.data.guardianName,
       signaturePath: path,

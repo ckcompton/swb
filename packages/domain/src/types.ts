@@ -36,8 +36,15 @@ export interface ClassSession {
 export interface Waiver {
   id: string;
   participantName: string;
+  dateOfBirth: string;
   participantEmail: string;
-  participantPhone: string | null;
+  participantPhone: string;
+  address: string;
+  emergencyContactName: string;
+  emergencyContactRelationship: string;
+  emergencyContactPhone: string;
+  medicalConditions: string;
+  photoConsent: boolean;
   isMinor: boolean;
   guardianName: string | null;
   signaturePath: string;

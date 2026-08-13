@@ -172,37 +172,58 @@ export type Database = {
       }
       waivers: {
         Row: {
+          address: string
           created_at: string
+          date_of_birth: string
+          emergency_contact_name: string
+          emergency_contact_phone: string
+          emergency_contact_relationship: string
           guardian_name: string | null
           id: string
           is_minor: boolean
+          medical_conditions: string
           participant_email: string
           participant_name: string
-          participant_phone: string | null
+          participant_phone: string
+          photo_consent: boolean
           signature_path: string
           signed_at: string
           waiver_version: string
         }
         Insert: {
+          address: string
           created_at?: string
+          date_of_birth: string
+          emergency_contact_name: string
+          emergency_contact_phone: string
+          emergency_contact_relationship: string
           guardian_name?: string | null
           id?: string
           is_minor?: boolean
+          medical_conditions?: string
           participant_email: string
           participant_name: string
-          participant_phone?: string | null
+          participant_phone: string
+          photo_consent?: boolean
           signature_path: string
           signed_at?: string
           waiver_version: string
         }
         Update: {
+          address?: string
           created_at?: string
+          date_of_birth?: string
+          emergency_contact_name?: string
+          emergency_contact_phone?: string
+          emergency_contact_relationship?: string
           guardian_name?: string | null
           id?: string
           is_minor?: boolean
+          medical_conditions?: string
           participant_email?: string
           participant_name?: string
-          participant_phone?: string | null
+          participant_phone?: string
+          photo_consent?: boolean
           signature_path?: string
           signed_at?: string
           waiver_version?: string
@@ -217,22 +238,36 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
       sign_waiver_public: {
         Args: {
+          p_address: string
+          p_date_of_birth: string
+          p_emergency_contact_name: string
+          p_emergency_contact_phone: string
+          p_emergency_contact_relationship: string
           p_guardian_name: string
           p_is_minor: boolean
+          p_medical_conditions: string
           p_participant_email: string
           p_participant_name: string
           p_participant_phone: string
+          p_photo_consent: boolean
           p_signature_path: string
           p_waiver_version: string
         }
         Returns: {
+          address: string
           created_at: string
+          date_of_birth: string
+          emergency_contact_name: string
+          emergency_contact_phone: string
+          emergency_contact_relationship: string
           guardian_name: string | null
           id: string
           is_minor: boolean
+          medical_conditions: string
           participant_email: string
           participant_name: string
-          participant_phone: string | null
+          participant_phone: string
+          photo_consent: boolean
           signature_path: string
           signed_at: string
           waiver_version: string

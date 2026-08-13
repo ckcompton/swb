@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getWaiverById, getWaiverSignatureUrl } from "@boxing-gym/data-access";
-import { WAIVER_TITLE, WAIVER_PARAGRAPHS } from "@boxing-gym/config";
-import { formatDateTime } from "@boxing-gym/utils";
+import { WAIVER_TITLE, WAIVER_SECTIONS } from "@boxing-gym/config";
+import { formatDateTime, formatCalendarDate } from "@boxing-gym/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { createClient } from "@/lib/supabase/server";
@@ -42,8 +42,17 @@ export default async function AdminWaiverDetailPage({
         </CardHeader>
         <CardContent>
           <div className="space-y-4 text-sm text-muted-foreground">
-            {WAIVER_PARAGRAPHS.map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
+            {WAIVER_SECTIONS.map((section, index) => (
+              <div key={section.heading}>
+                <p className="mb-1 font-semibold text-foreground">
+                  Section {index + 1} — {section.heading}
+                </p>
+                {section.paragraphs.map((paragraph, paragraphIndex) => (
+                  <p key={paragraphIndex} className="mb-2 last:mb-0">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
             ))}
           </div>
 
@@ -53,15 +62,29 @@ export default async function AdminWaiverDetailPage({
             <dt className="text-muted-foreground">Participant</dt>
             <dd className="font-medium">{waiver.participantName}</dd>
 
+            <dt className="text-muted-foreground">Date of birth</dt>
+            <dd className="font-medium">{formatCalendarDate(waiver.dateOfBirth)}</dd>
+
             <dt className="text-muted-foreground">Email</dt>
             <dd className="font-medium">{waiver.participantEmail}</dd>
 
-            {waiver.participantPhone && (
-              <>
-                <dt className="text-muted-foreground">Phone</dt>
-                <dd className="font-medium">{waiver.participantPhone}</dd>
-              </>
-            )}
+            <dt className="text-muted-foreground">Phone</dt>
+            <dd className="font-medium">{waiver.participantPhone}</dd>
+
+            <dt className="text-muted-foreground">Address</dt>
+            <dd className="font-medium">{waiver.address}</dd>
+
+            <dt className="text-muted-foreground">Emergency contact</dt>
+            <dd className="font-medium">
+              {waiver.emergencyContactName} ({waiver.emergencyContactRelationship}) —{" "}
+              {waiver.emergencyContactPhone}
+            </dd>
+
+            <dt className="text-muted-foreground">Medical disclosure</dt>
+            <dd className="font-medium">{waiver.medicalConditions}</dd>
+
+            <dt className="text-muted-foreground">Photo/media consent</dt>
+            <dd className="font-medium">{waiver.photoConsent ? "Granted" : "Declined"}</dd>
 
             {waiver.isMinor && (
               <>
