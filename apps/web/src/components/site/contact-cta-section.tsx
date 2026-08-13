@@ -22,7 +22,7 @@ export function ContactCtaSection() {
           <Button
             size="lg"
             className="mt-6 h-12 px-8 text-base"
-            render={<Link href="/waiver">Sign the waiver</Link>}
+            render={<Link href="/waiver">Sign Waiver</Link>}
             nativeButton={false}
           />
         </div>

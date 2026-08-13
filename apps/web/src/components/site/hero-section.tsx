@@ -28,7 +28,7 @@ export function HeroSection() {
           <Button
             size="lg"
             className="h-12 px-8 text-base"
-            render={<Link href="/waiver">Sign the waiver</Link>}
+            render={<Link href="/waiver">Book your first session</Link>}
             nativeButton={false}
           />
           <Button
