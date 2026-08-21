@@ -61,6 +61,7 @@ export function mapWaiver(row: WaiverRow): Waiver {
     guardianName: row.guardian_name,
     signaturePath: row.signature_path,
     waiverVersion: row.waiver_version,
+    ipAddress: row.ip_address,
     signedAt: row.signed_at,
     createdAt: row.created_at,
   };

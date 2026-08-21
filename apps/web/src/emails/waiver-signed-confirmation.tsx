@@ -39,6 +39,7 @@ interface WaiverSignedConfirmationEmailProps {
   signedAtLabel: string;
   waiverVersion: string;
   signatureDataUrl: string;
+  ipAddress: string | null;
 }
 
 export default function WaiverSignedConfirmationEmail({
@@ -63,11 +64,18 @@ export default function WaiverSignedConfirmationEmail({
   signedAtLabel,
   waiverVersion,
   signatureDataUrl,
+  ipAddress,
 }: WaiverSignedConfirmationEmailProps) {
   return (
     <Html lang="en">
       <Tailwind config={{ presets: [pixelBasedPreset] }}>
-        <Head />
+        <Head>
+          {/* This email is light-only -- without these, some clients auto-invert
+              colors in dark mode, which can make the black-ink signature nearly
+              invisible against an inverted background. */}
+          <meta name="color-scheme" content="light" />
+          <meta name="supported-color-schemes" content="light" />
+        </Head>
         <Body className="bg-gray-100 font-sans">
           <Preview>Your {siteName} liability waiver is on file</Preview>
           <Container className="mx-auto max-w-xl p-5">
@@ -142,7 +150,12 @@ export default function WaiverSignedConfirmationEmail({
               alt={`${isMinor ? "Guardian" : "Participant"} signature`}
               width={300}
               className="mx-auto block rounded border border-solid border-gray-300 bg-white"
+              style={{ backgroundColor: "#ffffff" }}
             />
+            <Text className="mt-2 text-center text-xs text-gray-400">
+              Digitally signed by {isMinor ? guardianName : participantName} on {signedAtLabel}
+              {ipAddress ? ` from IP ${ipAddress}` : ""}
+            </Text>
           </Container>
         </Body>
       </Tailwind>
@@ -181,6 +194,7 @@ WaiverSignedConfirmationEmail.PreviewProps = {
   waiverVersion: "v1",
   signatureDataUrl:
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+  ipAddress: "203.0.113.42",
 } satisfies WaiverSignedConfirmationEmailProps;
 
 export { WaiverSignedConfirmationEmail };

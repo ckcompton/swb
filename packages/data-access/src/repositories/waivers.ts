@@ -50,6 +50,7 @@ export interface SignWaiverPublicInput {
   guardianName?: string | null;
   signaturePath: string;
   waiverVersion: string;
+  ipAddress: string | null;
 }
 
 // The sole public write path -- calls the sign_waiver_public SECURITY
@@ -76,6 +77,7 @@ export async function signWaiverPublic(
     p_guardian_name: (input.guardianName ?? null) as string,
     p_signature_path: input.signaturePath,
     p_waiver_version: input.waiverVersion,
+    p_ip_address: input.ipAddress as string,
   });
   if (error) throw error;
   return mapWaiver(data);

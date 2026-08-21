@@ -41,6 +41,7 @@ interface WaiverSignedAdminAlertEmailProps {
   waiverVersion: string;
   signatureDataUrl: string;
   waiverUrl: string;
+  ipAddress: string | null;
 }
 
 export default function WaiverSignedAdminAlertEmail({
@@ -66,11 +67,18 @@ export default function WaiverSignedAdminAlertEmail({
   waiverVersion,
   signatureDataUrl,
   waiverUrl,
+  ipAddress,
 }: WaiverSignedAdminAlertEmailProps) {
   return (
     <Html lang="en">
       <Tailwind config={{ presets: [pixelBasedPreset] }}>
-        <Head />
+        <Head>
+          {/* This email is light-only -- without these, some clients auto-invert
+              colors in dark mode, which can make the black-ink signature nearly
+              invisible against an inverted background. */}
+          <meta name="color-scheme" content="light" />
+          <meta name="supported-color-schemes" content="light" />
+        </Head>
         <Body className="bg-gray-100 font-sans">
           <Preview>
             New waiver signed by {participantName} at {siteName}
@@ -150,7 +158,12 @@ export default function WaiverSignedAdminAlertEmail({
               alt={`${isMinor ? "Guardian" : "Participant"} signature`}
               width={300}
               className="mx-auto block rounded border border-solid border-gray-300 bg-white"
+              style={{ backgroundColor: "#ffffff" }}
             />
+            <Text className="mt-2 text-center text-xs text-gray-400">
+              Digitally signed by {isMinor ? guardianName : participantName} on {signedAtLabel}
+              {ipAddress ? ` from IP ${ipAddress}` : ""}
+            </Text>
           </Container>
         </Body>
       </Tailwind>
@@ -190,6 +203,7 @@ WaiverSignedAdminAlertEmail.PreviewProps = {
   signatureDataUrl:
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
   waiverUrl: "https://example.com/admin/waivers/00000000-0000-0000-0000-000000000000",
+  ipAddress: "203.0.113.42",
 } satisfies WaiverSignedAdminAlertEmailProps;
 
 export { WaiverSignedAdminAlertEmail };

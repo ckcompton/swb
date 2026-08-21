@@ -1,5 +1,6 @@
 "use server";
 
+import { headers } from "next/headers";
 import {
   waiverSignInputSchema,
   friendlyWaiverErrorMessage,
@@ -45,6 +46,13 @@ export async function signWaiverAction(formData: FormData): Promise<WaiverAction
   const base64 = parsed.data.signatureDataUrl.slice("data:image/png;base64,".length);
   const bytes = new Uint8Array(Buffer.from(base64, "base64"));
 
+  // Vercel (and most reverse proxies) set x-forwarded-for as
+  // "client, proxy1, proxy2..." -- the first entry is the original client.
+  // Best-effort audit trail only, not used for any security decision.
+  const requestHeaders = await headers();
+  const forwardedFor = requestHeaders.get("x-forwarded-for");
+  const ipAddress = forwardedFor?.split(",")[0]?.trim() || null;
+
   // No auth.uid() exists for a public signer -- the storage RLS policy only
   // allows admin reads, so the upload itself must go through the
   // service-role client (see apps/web/src/lib/supabase/service-role.ts).
@@ -74,6 +82,7 @@ export async function signWaiverAction(formData: FormData): Promise<WaiverAction
       guardianName: parsed.data.guardianName,
       signaturePath: path,
       waiverVersion: parsed.data.waiverVersion,
+      ipAddress,
     });
   } catch (error) {
     console.error("signWaiverAction: failed to save signed waiver", error);

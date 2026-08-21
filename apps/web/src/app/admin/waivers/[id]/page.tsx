@@ -120,7 +120,13 @@ export default async function AdminWaiverDetailPage({
               src={signatureUrl}
               alt={`${waiver.isMinor ? "Guardian" : "Participant"} signature`}
               className="h-40 max-w-full rounded-md border border-border bg-white"
+              style={{ backgroundColor: "#ffffff" }}
             />
+            <p className="mt-2 text-xs text-muted-foreground">
+              Digitally signed by {waiver.isMinor ? waiver.guardianName : waiver.participantName} on{" "}
+              {formatDateTime(waiver.signedAt)}
+              {waiver.ipAddress && <> from IP {waiver.ipAddress}</>}
+            </p>
           </div>
         </CardContent>
       </Card>

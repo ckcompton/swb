@@ -49,6 +49,7 @@ export interface Waiver {
   guardianName: string | null;
   signaturePath: string;
   waiverVersion: string;
+  ipAddress: string | null;
   signedAt: string;
   createdAt: string;
 }

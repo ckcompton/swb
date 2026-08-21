@@ -116,6 +116,7 @@ export async function sendWaiverSignedEmails(
                 signedAtLabel={signedAtLabel}
                 waiverVersion={waiver.waiverVersion}
                 signatureDataUrl={signatureDataUrl}
+                ipAddress={waiver.ipAddress}
               />
             ),
           },
@@ -159,6 +160,7 @@ export async function sendWaiverSignedEmails(
                 signedAtLabel={signedAtLabel}
                 waiverVersion={waiver.waiverVersion}
                 signatureDataUrl={signatureDataUrl}
+                ipAddress={waiver.ipAddress}
                 waiverUrl={`${env.NEXT_PUBLIC_SITE_URL}/admin/waivers/${waiver.id}`}
               />
             ),

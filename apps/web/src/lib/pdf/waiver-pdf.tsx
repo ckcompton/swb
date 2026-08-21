@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
   fieldValue: { flex: 1 },
   signatureLabel: { fontSize: 9, color: "#4b5563", textAlign: "center", marginBottom: 6 },
   signatureImage: { width: 220, height: 90, objectFit: "contain", alignSelf: "center" },
+  auditNote: { fontSize: 7, color: "#9ca3af", textAlign: "center", marginTop: 6 },
 });
 
 interface WaiverPdfProps {
@@ -127,6 +128,11 @@ function WaiverPdfDocument({
         </Text>
         {/* eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf/renderer's Image is a PDF primitive, not an HTML img; it has no alt prop */}
         <Image src={signatureDataUrl} style={styles.signatureImage} />
+        <Text style={styles.auditNote}>
+          Digitally signed by {waiver.isMinor ? waiver.guardianName : waiver.participantName} on{" "}
+          {signedAtLabel}
+          {waiver.ipAddress ? ` from IP ${waiver.ipAddress}` : ""}
+        </Text>
       </Page>
     </Document>
   );

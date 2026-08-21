@@ -180,6 +180,7 @@ export type Database = {
           emergency_contact_relationship: string
           guardian_name: string | null
           id: string
+          ip_address: string | null
           is_minor: boolean
           medical_conditions: string
           participant_email: string
@@ -199,6 +200,7 @@ export type Database = {
           emergency_contact_relationship: string
           guardian_name?: string | null
           id?: string
+          ip_address?: string | null
           is_minor?: boolean
           medical_conditions?: string
           participant_email: string
@@ -218,6 +220,7 @@ export type Database = {
           emergency_contact_relationship?: string
           guardian_name?: string | null
           id?: string
+          ip_address?: string | null
           is_minor?: boolean
           medical_conditions?: string
           participant_email?: string
@@ -244,6 +247,7 @@ export type Database = {
           p_emergency_contact_phone: string
           p_emergency_contact_relationship: string
           p_guardian_name: string
+          p_ip_address: string
           p_is_minor: boolean
           p_medical_conditions: string
           p_participant_email: string
@@ -262,6 +266,7 @@ export type Database = {
           emergency_contact_relationship: string
           guardian_name: string | null
           id: string
+          ip_address: string | null
           is_minor: boolean
           medical_conditions: string
           participant_email: string
