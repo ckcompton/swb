@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Image from "next/image";
 import { useForm, useWatch, Controller } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { waiverSignInputSchema, type WaiverSignInput } from "@boxing-gym/domain";
-import { WAIVER_TITLE, WAIVER_SECTIONS, WAIVER_VERSION } from "@boxing-gym/config";
+import { WAIVER_TITLE, WAIVER_SECTIONS, WAIVER_VERSION, DESIGN_TOKENS } from "@boxing-gym/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -96,20 +97,30 @@ export function WaiverSigner() {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="items-center text-center">
+        <Image
+          src="/logo-v2.png"
+          alt={DESIGN_TOKENS.siteName}
+          width={1100}
+          height={475}
+          className="h-16 w-auto"
+        />
+        <p className="mt-2 text-sm italic text-muted-foreground">{DESIGN_TOKENS.tagline}</p>
+        <p className="text-xs text-muted-foreground">{DESIGN_TOKENS.address}</p>
+        <Separator className="mt-4" />
         <CardTitle className="font-heading text-xl uppercase tracking-tight">
           {WAIVER_TITLE}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="max-h-64 space-y-4 overflow-y-auto rounded-md border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+        <div className="space-y-5 rounded-md border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
           {WAIVER_SECTIONS.map((section, index) => (
             <div key={section.heading}>
-              <p className="mb-1 font-semibold text-foreground">
+              <p className="mb-1 border-b-2 border-gold pb-1 font-heading text-xs uppercase tracking-wide text-foreground">
                 Section {index + 1} — {section.heading}
               </p>
               {section.paragraphs.map((paragraph, paragraphIndex) => (
-                <p key={paragraphIndex} className="mb-2 last:mb-0">
+                <p key={paragraphIndex} className="mb-2 mt-2 last:mb-0">
                   {paragraph}
                 </p>
               ))}
