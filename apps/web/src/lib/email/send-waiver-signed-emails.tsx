@@ -28,13 +28,18 @@ export async function sendWaiverSignedEmails(
   waiver: Waiver,
   signatureDataUrl: string,
 ): Promise<void> {
-  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL;
+  // Comma-separated so multiple admins (e.g. the owner and the shop's public
+  // contact inbox) can be notified without adding another env var.
+  const adminEmails = (process.env.ADMIN_NOTIFICATION_EMAIL ?? "")
+    .split(",")
+    .map((email) => email.trim())
+    .filter(Boolean);
   const from = process.env.RESEND_FROM_EMAIL;
 
   console.log("[email] sendWaiverSignedEmails: starting", {
     waiverId: waiver.id,
     to: waiver.participantEmail,
-    adminEmail: adminEmail || "(not set -- admin alert will be skipped)",
+    adminEmails: adminEmails.length > 0 ? adminEmails : "(not set -- admin alert will be skipped)",
     from: from || "(not set)",
   });
 
@@ -93,16 +98,16 @@ export async function sendWaiverSignedEmails(
     },
   ];
 
-  if (adminEmail) {
+  if (adminEmails.length > 0) {
     jobs.push({
       label: "admin alert",
       emailType: "waiver_signed_admin_alert",
-      to: adminEmail,
+      to: adminEmails.join(", "),
       send: () =>
         resend.emails.send(
           {
             from,
-            to: [adminEmail],
+            to: adminEmails,
             subject: `New waiver signed by ${waiver.participantName}`,
             react: (
               <WaiverSignedAdminAlertEmail

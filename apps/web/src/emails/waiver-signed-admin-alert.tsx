@@ -118,14 +118,14 @@ export default function WaiverSignedAdminAlertEmail({
               <strong>Waiver version:</strong> {waiverVersion}
             </Text>
 
-            <Text className="mb-2 text-sm text-gray-600">
+            <Text className="mb-2 text-center text-sm text-gray-600">
               {isMinor ? "Parent/guardian signature" : "Signature"}
             </Text>
             <Img
               src={signatureDataUrl}
               alt={`${isMinor ? "Guardian" : "Participant"} signature`}
               width={300}
-              className="rounded border border-solid border-gray-300 bg-white"
+              className="mx-auto block rounded border border-solid border-gray-300 bg-white"
             />
           </Container>
         </Body>
