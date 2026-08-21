@@ -1,13 +1,14 @@
 import "server-only";
 import type { Waiver } from "@boxing-gym/domain";
 import { logEmailSend } from "@boxing-gym/data-access";
-import { DESIGN_TOKENS, WAIVER_TITLE, WAIVER_PARAGRAPHS } from "@boxing-gym/config";
+import { DESIGN_TOKENS, WAIVER_TITLE, WAIVER_SECTIONS } from "@boxing-gym/config";
 import { formatDateTime, formatCalendarDate } from "@boxing-gym/utils";
 import { getResend } from "@/lib/email/client";
 import { env } from "@/lib/env";
 import { createServiceRoleClient } from "@/lib/supabase/service-role";
 import { WaiverSignedConfirmationEmail } from "@/emails/waiver-signed-confirmation";
 import { WaiverSignedAdminAlertEmail } from "@/emails/waiver-signed-admin-alert";
+import { renderWaiverPdf } from "@/lib/pdf/waiver-pdf";
 
 // Best-effort notification pair sent after a waiver is successfully saved --
 // callers should log and swallow errors from this rather than fail the
@@ -54,6 +55,27 @@ export async function sendWaiverSignedEmails(
   const signedAtLabel = formatDateTime(waiver.signedAt);
   const dateOfBirthLabel = formatCalendarDate(waiver.dateOfBirth);
 
+  // Best-effort: a failed PDF render should not block sending the emails
+  // themselves -- the HTML body already carries the same information.
+  let pdfAttachment: { filename: string; content: Buffer } | null = null;
+  try {
+    const pdfBuffer = await renderWaiverPdf({
+      waiver,
+      dateOfBirthLabel,
+      signedAtLabel,
+      signatureDataUrl,
+    });
+    pdfAttachment = {
+      filename: `${DESIGN_TOKENS.siteName.replace(/\s+/g, "-")}-Waiver-${waiver.participantName.replace(/\s+/g, "-")}.pdf`,
+      content: pdfBuffer,
+    };
+  } catch (error) {
+    console.error(
+      "[email] failed to render waiver PDF -- sending emails without attachment:",
+      error,
+    );
+  }
+
   const jobs: {
     label: string;
     emailType: string;
@@ -70,11 +92,15 @@ export async function sendWaiverSignedEmails(
             from,
             to: [waiver.participantEmail],
             subject: `Your ${DESIGN_TOKENS.siteName} waiver is confirmed`,
+            attachments: pdfAttachment ? [pdfAttachment] : undefined,
             react: (
               <WaiverSignedConfirmationEmail
                 siteName={DESIGN_TOKENS.siteName}
+                tagline={DESIGN_TOKENS.tagline}
+                gymAddress={DESIGN_TOKENS.address}
+                logoUrl={`${env.NEXT_PUBLIC_SITE_URL}/logo-v2.png`}
                 waiverTitle={WAIVER_TITLE}
-                waiverParagraphs={WAIVER_PARAGRAPHS}
+                waiverSections={WAIVER_SECTIONS}
                 participantName={waiver.participantName}
                 dateOfBirthLabel={dateOfBirthLabel}
                 participantEmail={waiver.participantEmail}
@@ -109,11 +135,15 @@ export async function sendWaiverSignedEmails(
             from,
             to: adminEmails,
             subject: `New waiver signed by ${waiver.participantName}`,
+            attachments: pdfAttachment ? [pdfAttachment] : undefined,
             react: (
               <WaiverSignedAdminAlertEmail
                 siteName={DESIGN_TOKENS.siteName}
+                tagline={DESIGN_TOKENS.tagline}
+                gymAddress={DESIGN_TOKENS.address}
+                logoUrl={`${env.NEXT_PUBLIC_SITE_URL}/logo-v2.png`}
                 waiverTitle={WAIVER_TITLE}
-                waiverParagraphs={WAIVER_PARAGRAPHS}
+                waiverSections={WAIVER_SECTIONS}
                 participantName={waiver.participantName}
                 dateOfBirthLabel={dateOfBirthLabel}
                 participantEmail={waiver.participantEmail}

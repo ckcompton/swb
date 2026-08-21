@@ -69,7 +69,3 @@ export const WAIVER_SECTIONS: WaiverSection[] = [
     ],
   },
 ];
-
-// Flattened paragraph list -- kept for callers (emails, admin detail view)
-// that render plain paragraphs without section headings.
-export const WAIVER_PARAGRAPHS = WAIVER_SECTIONS.flatMap((section) => section.paragraphs);
